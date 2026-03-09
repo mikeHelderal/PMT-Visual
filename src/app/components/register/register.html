@@ -1,0 +1,56 @@
+<div class="tui-container tui-container_adaptive" style="max-width: 450px; margin-top: 5rem;">
+  <h2 class="tui-text_h3">Rejoindre PMT</h2>
+
+  <form (ngSubmit)="onSubmit()" class="tui-space_top-6">
+
+    <div class="tui-space_bottom-4">
+      <label tuiLabel="Nom d'utilisateur">
+        <input
+          tuiTextfield
+          name="userName"
+          [(ngModel)]="user.username"
+          (input)="validate('userName')"
+        />
+      </label>
+    </div>
+
+    <div class="tui-space_bottom-4">
+      <label tuiLabel="Email">
+        <input
+          tuiTextfield
+          type="email"
+          name="email"
+          [(ngModel)]="user.email"
+          (input)="validate('email')"
+        />
+      </label>
+    </div>
+
+    <div class="tui-space_bottom-6">
+      <label tuiLabel="Mot de passe">
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="user.password"
+          (input)="validate('password')"
+        />
+      </label>
+    </div>
+
+    @if (result.hasErrors()) {
+      <tui-error
+        [error]="result.getErrors()[0]">
+      </tui-error>
+    }
+
+    <div class="tui-form__buttons tui-space_top-4">
+      <button
+        tuiButton
+        type="submit"
+        [disabled]="result.hasErrors()"
+      >
+        Créer mon compte
+      </button>
+    </div>
+  </form>
+</div>

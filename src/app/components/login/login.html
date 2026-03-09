@@ -1,0 +1,21 @@
+<div class="tui-container tui-container_adaptive" style="max-width: 400px; margin-top: 5rem;">
+  <h2 class="tui-text_h3">Connexion</h2>
+
+  <form (ngSubmit)="onLogin()" class="tui-space_top-6">
+    <div class="tui-space_bottom-4">
+      <label tuiLabel="Email">
+        <input tuiTextfield type="email" name="email" [(ngModel)]="credentials.email" />
+      </label>
+    </div>
+
+    <div class="tui-space_bottom-6">
+      <label tuiLabel="Mot de passe">
+        <input type="password" name="password" [(ngModel)]="credentials.password" />
+      </label>
+    </div>
+
+    <button tuiButton type="submit" [appearance]="'primary'">
+      Se connecter
+    </button>
+  </form>
+</div>
