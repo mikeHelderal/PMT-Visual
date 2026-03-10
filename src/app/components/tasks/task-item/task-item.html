@@ -1,0 +1,52 @@
+<td tuiTd>
+  @if(!isEditing()){
+    <span (click)="toggleEdit()" style="cursor: pointer">
+      {{task().nom}}
+    </span>
+
+  } @else {
+    <tui-textfield size="s">
+      <input
+        tuiTextfield
+        [value]="task().nom"
+        #nameInput
+        (blur)="saveName(nameInput.value)"
+        (keydown.enter)="saveName(nameInput.value)"
+        autoFocus
+      />
+    </tui-textfield>
+  }
+</td>
+<td tuiTd>
+  <button
+    tuiBadge
+    type="button"
+    [appearance]="getPriorityAppearance(task().priorite)"
+    (click)="changePriority()"
+    style="cursor: pointer"
+  >
+    {{ task().priorite }}
+  </button>
+</td>
+<td tuiTd>
+  <button
+    tuiBadge
+    type="button"
+    [appearance]="task().statut === 'TERMINE' ? 'success' : (task().statut === 'EN_COURS' ? 'warning' : 'neutral')"
+    (click)="changeStatus()"
+  >
+    {{ task().statut }}
+  </button>
+</td>
+<td tuiTd>{{task().dateEcheance | date:'dd/MM/yyyy'}}</td>
+<td tuiTd>
+  <button
+    tuiIconButton
+    appearance="flat"
+    size="s"
+    iconStart="@tui.trash"
+    type="button"
+    (click)="onDelete()"
+    title="Supprimer la tâche"
+  ></button>
+</td>

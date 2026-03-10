@@ -1,0 +1,29 @@
+<div class="tui-container tui-space_top-10">
+  <h1 class="tui-text_h4 tui-space_bottom-6">Gestion des tâches</h1>
+
+  <app-task-form [projectId]="projectId" (taskCreated)="onTaskCreated($event)"/>
+
+  <hr class="tui-space_vertical-8"/>
+
+  <table tuiTable [columns]="['nom','priorite', 'statut', 'echeance']">
+    <thead>
+    <tr tuiThGroup>
+      <th tuiTh>Tâche</th>
+      <th tuiTh>Priorité</th>
+      <th tuiTh>Statut</th>
+      <th tuiTh>échéance</th>
+    </tr>
+    </thead>
+    <tbody tuiTbody>
+    @for(task of tasks(); track task.id){
+     <tr >
+       <app-task-item [task]="task" (taskDeleted)="removeTaskFromList($event)" />
+     </tr>
+    } @empty {
+      <td colspan="4" class="tui-text_body-m tui-space_vertical-4">
+        Aucune tâche pour le moment
+      </td>
+    }
+    </tbody>
+  </table>
+</div>
