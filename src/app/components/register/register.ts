@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {AuthService} from '../../services/auth';
+import {AuthService} from '../../services/auth/auth';
 import {registerSuite} from './register.validation';
 import {TuiButton, TuiError, TuiLabel, TuiTextfield} from '@taiga-ui/core';
 

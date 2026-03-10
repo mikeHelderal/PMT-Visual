@@ -1,0 +1,25 @@
+<div tuiCardLarge >
+  <header tuiHeader>
+    <h2 tuiTitle>{{project.name}}</h2>
+    <div tuiSubtitle>Créer le {{project().createdAt}}</div>
+  </header>
+</div>
+<section class="tui-space_vertical-4">
+  {{project().description}}
+</section>
+<footer>
+<div class="tui-space_top-4">
+  <button tuiButton type="button" appearance="flat" size="s">
+    Ouvrir le projet
+  </button>
+  <    <button
+      tuiButton
+      appearance="accent"
+      size="s"
+      iconStart="@tui.trash"
+      (click)="onDelete.emit(project().id!)">
+      Supprimer
+    </button>
+  </div>
+</footer>
+

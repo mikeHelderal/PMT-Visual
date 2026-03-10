@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TuiButton, TuiLabel, TuiTextfield} from '@taiga-ui/core';
 import {loginSuite} from './login.validation';
-import {AuthService} from '../../services/auth';
+import {AuthService} from '../../services/auth/auth';
 import {Router} from '@angular/router';
 
 @Component({

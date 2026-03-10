@@ -1,0 +1,41 @@
+<div class="tui-container tui-container_adaptive tui-space_top-10" >
+  <div class="tui-row tui-row_adaptive tui-space_bottom-8" >
+    <div class="tui-col_md-12">
+      <h1 class="tui-text_h3">Mes Projets</h1>
+      <button tuiButton type="button" (click)="showDialog(createModal)" >Nouveau Projet</button>
+    </div>
+  </div>
+  <div class="tui-row tui-row_adaptive">
+    @for(item of projects(); track item.id){
+      <div class="tui-col_md-' tui-space_bottom-4">
+        <app-project-card [project]="item" (onDelete)="deleteProject($event)"/>
+      </div>
+    } @empty {
+      <div class="tui-col_md-12">
+        <p class="tui-text_body-m">VOus n'avez pas encore de projet.</p>
+      </div>
+    }
+  </div>
+</div>
+<ng-template #createModal let-observer>
+  <form (ngSubmit)="submitProject(observer)">
+    <div class="tui-space_bottom-4">
+      <label tuiLabel="Nom du projet">
+        <input tuiTextfield [(ngModel)]="newProject.nom" name="nom" required />
+      </label>
+    </div>
+
+    <div class="tui-space_bottom-6">
+      <label tuiLabel="Description">
+        <textarea tuiTextarea [(ngModel)]="newProject.description" name="description"></textarea>
+      </label>
+    </div>
+
+    <div class="tui-form__buttons">
+      <button tuiButton type="submit" size="m">Créer</button>
+      <button tuiButton type="button" appearance="flat" size="m" (click)="observer.complete()">
+        Annuler
+      </button>
+    </div>
+  </form>
+</ng-template>
