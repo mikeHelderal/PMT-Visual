@@ -1,0 +1,35 @@
+<form (ngSubmit)="submitTask()" class="tui-form">
+  <div class="tui-form__row">
+
+    <label tuiLabel="Nom de la tâche">
+      <tui-textfield
+        [tuiAppearance]="result.hasErrors('nom') ? 'error' : 'textfield'"
+      >
+        <input
+          tuiTextfield
+          [(ngModel)]="newTask.nom"
+          name="nom"
+          (ngModelChange)="onInput('nom')"
+          placeholder="Ex: Finaliser le rapport"
+        />
+      </tui-textfield>
+    </label>
+
+    @if (result.hasErrors('nom')) {
+      <div class="tui-error tui-text_caption tui-space_top-1">
+        {{ result.getErrors('nom')[0] }}
+      </div>
+    }
+  </div>
+
+  <div class="tui-form__buttons">
+    <button
+      tuiButton
+      type="submit"
+      appearance="primary"
+      [disabled]="!result.isValid()"
+    >
+      Ajouter la tâche
+    </button>
+  </div>
+</form>
