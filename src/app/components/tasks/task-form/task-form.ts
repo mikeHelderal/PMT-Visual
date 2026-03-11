@@ -1,9 +1,10 @@
-import {Component, inject, input, output} from '@angular/core';
+import {Component, inject, input, output, signal} from '@angular/core';
 import {TaskService} from '../../../services/task/task-service';
 import {Task} from '../../../models/task.model';
 import {taskSuite} from './task.suite';
 import {FormsModule} from '@angular/forms';
-import {TuiAppearance, TuiButton, TuiTextfield} from '@taiga-ui/core';
+import { TuiButton, TuiTextfield} from '@taiga-ui/core';
+import {TuiChevron, TuiDataListWrapper, TuiSelect, TuiTextarea} from '@taiga-ui/kit';
 
 @Component({
   selector: 'app-task-form',
@@ -11,7 +12,10 @@ import {TuiAppearance, TuiButton, TuiTextfield} from '@taiga-ui/core';
     FormsModule,
     TuiTextfield,
     TuiButton,
-    TuiAppearance
+    TuiTextarea,
+    TuiSelect,
+    TuiChevron,
+    TuiDataListWrapper,
   ],
   templateUrl: './task-form.html',
   styleUrl: './task-form.css',
@@ -21,29 +25,63 @@ export class TaskForm {
   private taskService = inject(TaskService);
   public projectId = input.required<number>()
   public taskCreated = output<Task>();
+  public touched = {
+    nom: false,
+  };
+
   public newTask: Partial<Task> = {
     nom: '',
+    description: '',
     priorite: 'MOYENNE',
-    statut: 'A_FAIRE'
+    statut: 'A_FAIRE',
+    dateEcheance: undefined
   };
-  public  result = taskSuite.get();
+
+  priorites = ['BASSE', 'MOYENNE', 'HAUTE'];
+  stringifyPriorite = (item: string): string => {
+    switch (item) {
+      case 'BASSE':
+        return 'Basse';
+      case 'MOYENNE':
+        return 'Moyenne';
+      case 'HAUTE':
+        return 'Haute';
+      default:
+        return item;
+    }
+  };
+
+  statut = ['A_FAIRE', 'EN_COURS', 'TERMINER']
+  stringifyStatut = (item: string): string => {
+    switch (item) {
+      case 'A_FAIRE':
+        return 'a faire';
+      case 'EN_COURS':
+        return 'en cours';
+      case 'TERMINER':
+        return 'terminé';
+      default:
+        return item;
+    }
+  };
+
+  public  result = signal(taskSuite.run(this.newTask));
 
   onInput(field: string) {
-    // 2. On utilise une petite ruse de typage ici pour débloquer l'IDE
-    const suite = taskSuite as any;
-    this.result = suite(this.newTask, field);
+    this.touched[field as keyof typeof this.touched] = true;
+    this.result.set(taskSuite.run(this.newTask, field));
   }
 
   submitTask() {
-    const suite = taskSuite as any;
-    this.result = suite(this.newTask);
+    this.touched.nom = true;
+    this.result.set(taskSuite.run(this.newTask));
 
-    if(this.result.isValid()){
+    if(this.result().isValid()){
       const taskToSave = {...this.newTask, project: {id: this.projectId()}} as Task;
       this.taskService.createTask(taskToSave).subscribe({
         next: (savedTask) => {
-          this.taskCreated.emit(savedTask);
-          this.resetForm();
+          this.resetForm(savedTask
+          );
         },
         error: (err) => {
           console.log('Erreur lors de la création : ',err);
@@ -52,9 +90,13 @@ export class TaskForm {
     }
   }
 
-  private resetForm(): void {
+  private resetForm(saveTask : Task): void {
     this.newTask = {nom: '', priorite: 'MOYENNE', statut: 'A_FAIRE'};
-    this.result = taskSuite.get();
+    this.touched = {
+      nom: false,
+    };
+    this.result.set(taskSuite.run(this.newTask));
+    this.taskCreated.emit(saveTask);
   }
 
 }

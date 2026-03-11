@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TuiButton, TuiLabel, TuiTextfield} from '@taiga-ui/core';
 import {loginSuite} from './login.validation';
@@ -16,12 +16,12 @@ import {Router} from '@angular/router';
   styleUrl: './login.css',
 })
 export class Login {
+  private router = inject(Router)
   credentials = { email: '', password: '' };
   result = loginSuite.get();
 
   constructor(
-    private authService: AuthService,
-    private router: Router
+    private authService: AuthService
   ) {}
 
   onLogin() {
@@ -30,13 +30,10 @@ export class Login {
     if (this.result.isValid()) {
       this.authService.login(this.credentials).subscribe({
         next: (user) => {
-          console.log('Connecté !', user);
           localStorage.setItem('currentUser', JSON.stringify(user));
-          alert(`Bienvenue ${user.userName} !`);
-
           this.router.navigate(['/projects']);
         },
-        error: (err : any) => {
+        error: () => {
           alert('Identifiants incorrects');
         }
       });

@@ -1,41 +1,68 @@
-<div class="tui-container tui-container_adaptive tui-space_top-10" >
-  <div class="tui-row tui-row_adaptive tui-space_bottom-8" >
-    <div class="tui-col_md-12">
-      <h1 class="tui-text_h3">Mes Projets</h1>
-      <button tuiButton type="button" (click)="showDialog(createModal)" >Nouveau Projet</button>
-    </div>
+<div class="project-page">
+
+  <header class="project-page__header">
+    <h1 class="tui-text_h3">Mes projets</h1>
+    <p class="project-page__subtitle">Retrouve et gère tous tes projets</p>
+  </header>
+
+  <div class="project-page__actions">
+    <button
+      tuiButton
+      appearance="primary"
+      size="s"
+      class="new-project-btn"
+      (click)="showDialog(createModal)"
+    >
+      Nouveau projet
+    </button>
   </div>
-  <div class="tui-row tui-row_adaptive">
-    @for(item of projects(); track item.id){
-      <div class="tui-col_md-' tui-space_bottom-4">
-        <app-project-card [project]="item" (onDelete)="deleteProject($event)"/>
+
+  <section class="project-page__content">
+    @if (projects().length > 0) {
+      <div class="project-grid">
+        @for(item of projects(); track item.id) {
+          <div class="project-grid__item">
+            <app-project-card
+              [project]="item"
+              (onDelete)="deleteProject($event)"
+            />
+          </div>
+        }
       </div>
-    } @empty {
-      <div class="tui-col_md-12">
-        <p class="tui-text_body-m">VOus n'avez pas encore de projet.</p>
+    } @else {
+      <div class="project-empty">
+        <p class="tui-text_body-m">Vous n'avez pas encore de projet.</p>
       </div>
     }
-  </div>
-</div>
-<ng-template #createModal let-observer>
-  <form (ngSubmit)="submitProject(observer)">
-    <div class="tui-space_bottom-4">
-      <label tuiLabel="Nom du projet">
-        <input tuiTextfield [(ngModel)]="newProject.nom" name="nom" required />
-      </label>
-    </div>
+  </section>
 
-    <div class="tui-space_bottom-6">
-      <label tuiLabel="Description">
-        <textarea tuiTextarea [(ngModel)]="newProject.description" name="description"></textarea>
-      </label>
-    </div>
+</div>
+
+<ng-template #createModal let-observer>
+  <form class="project-modal-form" (ngSubmit)="submitProject(observer)">
+
+    <tui-textfield>
+      <label tuiLabel>Nom du projet</label>
+      <input tuiTextfield [(ngModel)]="newProject.nom" name="nom" required />
+    </tui-textfield>
+
+    <tui-textfield>
+      <label tuiLabel>Description</label>
+      <textarea tuiTextarea [(ngModel)]="newProject.description" name="description"></textarea>
+    </tui-textfield>
 
     <div class="tui-form__buttons">
-      <button tuiButton type="submit" size="m">Créer</button>
-      <button tuiButton type="button" appearance="flat" size="m" (click)="observer.complete()">
+      <button tuiButton type="submit">Créer</button>
+
+      <button
+        tuiButton
+        appearance="flat"
+        type="button"
+        (click)="observer.complete()"
+      >
         Annuler
       </button>
     </div>
+
   </form>
 </ng-template>

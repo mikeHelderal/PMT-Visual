@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth';
 import {registerSuite} from './register.validation';
 import {TuiButton, TuiError, TuiLabel, TuiTextfield} from '@taiga-ui/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -16,6 +17,8 @@ import {TuiButton, TuiError, TuiLabel, TuiTextfield} from '@taiga-ui/core';
   styleUrl: './register.css',
 })
 export class Register {
+
+  private router = inject(Router);
 
   user = {username: '',email: '', password: ''};
   result: any = registerSuite.get();
@@ -31,8 +34,11 @@ export class Register {
 
     if(this.result.isValid()){
       this.authService.register(this.user).subscribe({
-        next: result => alert('Inscription réussie !'),
-        error: result => alert("Erreur lors de l'inscription")
+        next: () =>{
+          alert('Inscription réussie !');
+          this.router.navigate(['/login']);
+        },
+        error: () => alert("Erreur lors de l'inscription")
       })
     }else {
       alert('Veuillez corriger les erreurs dans le formulaire.');

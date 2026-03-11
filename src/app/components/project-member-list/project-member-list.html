@@ -4,27 +4,32 @@
       <h2 tuiTitle="l" class="tui-space_bottom-6">Membres du projet</h2>
     </div>
   </div>
+  <div class="tui-row tui-row_s">
+    <div class="tui-col_12">
+      <app-project-member-invite [projectId]="projectId()" (memberAdded)="loadMembers()" ></app-project-member-invite>
+    </div>
+  </div>
 
   <tui-loader [overlay]="true" [showLoader]="isLoading()">
     <div class="tui-stack tui-stack_m">
       @for (member of members(); track member.id) {
-        <div tuiCardLarge tuiAppearance="surface">
+        <div tuiCardLarge >
           <header tuiHeader>
             <tui-avatar
               size="m"
-              [src]="member.user.userName"
+              [src]="member.user.username"
               class="tui-space_right-3"
             ></tui-avatar>
 
             <div tuiTitle>
-              {{ member.user.userName }}
+              {{ member.user.username }}
               <div tuiSubtitle>
                 <tui-badge appearance="neutral" size="m">
-                  {{ member.role.name }}
+                  {{ member.role.libelle }}
                 </tui-badge>
                 <span class="tui-text_caption tui-space_left-2">
-                                    Inscrit le {{ member.dateArrivee | date:'shortDate' }}
-                                </span>
+                  Inscrit le {{ member.dateArrivee | date : 'dd/MM/yyyy' }}
+                </span>
               </div>
             </div>
 
@@ -33,7 +38,7 @@
               type="button"
               appearance="secondary-destructive"
               size="s"
-              iconStart="tuiIconTrashLarge"
+              iconStart="@tui.trash"
               (click)="deleteMember(member.id!)"
             >
               Retirer
@@ -41,7 +46,7 @@
           </header>
         </div>
       } @empty {
-        <div tuiCardLarge tuiAppearance="surface" class="tui-text_body-m">
+        <div tuiCardLarge class="member-empty tui-text_body-m">
           Aucun membre trouvé pour ce projet.
         </div>
       }

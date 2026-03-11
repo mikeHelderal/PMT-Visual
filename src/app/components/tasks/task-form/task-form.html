@@ -1,25 +1,84 @@
-<form (ngSubmit)="submitTask()" class="tui-form">
+<form (ngSubmit)="submitTask()" class="tui-form task-modal-form">
+
   <div class="tui-form__row">
+    <tui-textfield>
+      <label tuiLabel>Nom de la tâche</label>
 
-    <label tuiLabel="Nom de la tâche">
-      <tui-textfield
-        [tuiAppearance]="result.hasErrors('nom') ? 'error' : 'textfield'"
-      >
-        <input
-          tuiTextfield
-          [(ngModel)]="newTask.nom"
-          name="nom"
-          (ngModelChange)="onInput('nom')"
-          placeholder="Ex: Finaliser le rapport"
-        />
-      </tui-textfield>
-    </label>
+      <input
+        tuiTextfield
+        [(ngModel)]="newTask.nom"
+        name="nom"
+        (ngModelChange)="onInput('nom') ; touched.nom = true"
+        placeholder="Ex: Finaliser le rapport"
+      />
+    </tui-textfield>
 
-    @if (result.hasErrors('nom')) {
+    @if ( touched.nom && result().hasErrors('nom')) {
       <div class="tui-error tui-text_caption tui-space_top-1">
-        {{ result.getErrors('nom')[0] }}
+        {{ result().getErrors('nom')[0] }}
       </div>
     }
+  </div>
+
+  <div class="tui-form__row">
+    <tui-textfield>
+      <label tuiLabel>Description</label>
+
+      <textarea
+        tuiTextarea
+        [(ngModel)]="newTask.description"
+        name="description"
+        placeholder="Détails de la tâche"
+      ></textarea>
+    </tui-textfield>
+  </div>
+
+  <div class="tui-form__row">
+    <tui-textfield tuiChevron [stringify]="stringifyPriorite"
+    >
+      <label tuiLabel>Priorité</label>
+      <input
+        tuiSelect
+        [(ngModel)]="newTask.priorite"
+        (ngModelChange)="onInput('priorite') ; "
+        name="priorite"
+      />
+      <tui-data-list-wrapper
+        *tuiTextfieldDropdown
+        new
+        [items]="priorites"
+      />
+    </tui-textfield>
+  </div>
+
+  <div class="tui-form__row">
+    <tui-textfield tuiChevron [stringify]="stringifyStatut">
+      <label tuiLabel>Statut</label>
+      <input
+        tuiSelect
+        [(ngModel)]="newTask.statut"
+        (ngModelChange)="onInput('statut')"
+        name="statut"
+      />
+      <tui-data-list-wrapper
+        *tuiTextfieldDropdown
+        new
+        [items]="statut"
+      />
+    </tui-textfield>
+  </div>
+
+  <div class="tui-form__row">
+    <tui-textfield>
+      <label tuiLabel>Date d'échéance</label>
+
+      <input
+        tuiTextfield
+        type="date"
+        [(ngModel)]="newTask.dateEcheance"
+        name="dateEcheance"
+      />
+    </tui-textfield>
   </div>
 
   <div class="tui-form__buttons">
@@ -27,9 +86,10 @@
       tuiButton
       type="submit"
       appearance="primary"
-      [disabled]="!result.isValid()"
+      [disabled]="!result().isValid()"
     >
       Ajouter la tâche
     </button>
   </div>
+
 </form>
