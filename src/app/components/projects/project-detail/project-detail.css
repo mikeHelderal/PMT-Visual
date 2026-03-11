@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.project-detail-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.project-detail-page__header {
+  margin-bottom: 2rem;
+}
+
+.project-detail-page__grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.project-detail-page__members,
+.project-detail-page__tasks {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  min-width: 0;
+}
+
+@media (max-width: 960px) {
+  .project-detail-page__grid {
+    grid-template-columns: 1fr;
+  }
+}

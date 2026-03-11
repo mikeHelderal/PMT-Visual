@@ -1,8 +1,8 @@
-import {Component, inject, input, output, signal} from '@angular/core';
+import {Component, inject, input, output, signal, TemplateRef} from '@angular/core';
 import {ProjectMemberService} from '../../services/projectMember/project-member';
 import {INVITE_SUITE} from './project-member-validation';
 import {FormsModule} from '@angular/forms';
-import {TuiButton, TuiError, TuiLabel, TuiLoader, TuiTextfield} from '@taiga-ui/core';
+import {TuiButton, TuiDialogService, TuiError, TuiLabel, TuiLoader, TuiTextfield} from '@taiga-ui/core';
 import {TuiChevron, TuiDataListWrapper, TuiSelect} from '@taiga-ui/kit';
 
 @Component({
@@ -27,12 +27,13 @@ export class ProjectMemberInvite {
   readonly memberAdded = output<void>();
 
   private readonly memberService = inject(ProjectMemberService);
+  private readonly dialogs = inject(TuiDialogService);
+
 
   form = { email: '', roleName: 'MEMBER' };
-
   result = signal(INVITE_SUITE.get());
-  readonly roles = ['ADMIN', 'MEMBER', 'GUEST'];
-  readonly isLoading = signal(false);
+  roles = ['ADMIN', 'MEMBER', 'GUEST'];
+  isLoading = signal(false);
 
   onInput(field: string): void {
     this.result.set(INVITE_SUITE.run(this.form, field));
@@ -40,6 +41,15 @@ export class ProjectMemberInvite {
 
   getError(field: string): string | undefined {
     return this.result().getErrors(field)[0];
+  }
+
+  openAddMemberDialog(content : TemplateRef<any>): void {
+    this.dialogs.open(content, {
+      label: 'Nouveau membre',
+      size: 'm',
+    }).subscribe({
+      complete: () => console.log('Dialog fermée'),
+    });
   }
 
   submit(): void {

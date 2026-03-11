@@ -1,0 +1,70 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.tui-container {
+  width: 100%;
+}
+
+.tui-container h2 {
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.tui-stack {
+  margin-top: 1.5rem;
+}
+
+[tuiCardLarge] {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 1rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+[tuiCardLarge]:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+[tuiCardLarge] [tuiHeader] {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+[tuiCardLarge] [tuiTitle] {
+  flex: 1;
+  min-width: 0;
+}
+
+[tuiCardLarge] [tuiSubtitle] {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+[tui-avatar] {
+  flex-shrink: 0;
+}
+
+.tui-text_caption {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+button[tuiButton] {
+  flex-shrink: 0;
+}
+
+.tui-stack > [tuiCardLarge] + [tuiCardLarge] {
+  margin-top: 0.9rem;
+}
+
+.member-empty {
+  text-align: center;
+  padding: 1.25rem;
+  color: rgba(0, 0, 0, 0.65);
+}

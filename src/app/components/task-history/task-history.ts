@@ -37,8 +37,8 @@ export class TaskHistory {
 
   private loadHistory(id: number): void {
     this.taskService.getTaskHistory(id).subscribe({
-      next: (data) => this.historyItems.set(data),
-      error: (err) => console.error("Erreur de synchronisation; err")
+      next: (data: TaskHistoryModel[]) => this.historyItems.set(data),
+      error: () => console.error("Erreur de synchronisation; err")
     });
   }
 

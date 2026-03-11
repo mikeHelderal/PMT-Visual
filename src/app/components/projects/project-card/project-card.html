@@ -1,25 +1,37 @@
-<div tuiCardLarge >
-  <header tuiHeader>
-    <h2 tuiTitle>{{project.name}}</h2>
-    <div tuiSubtitle>Créer le {{project().createdAt}}</div>
+<div tuiCardLarge class="project-card">
+
+  <header tuiHeader class="project-card__header" >
+    <h2 tuiTitle>{{ project().nom }}</h2>
+    <div tuiSubtitle>
+      Créé le {{ project().createdAt | date:'dd/MM/yyyy' }}
+    </div>
   </header>
-</div>
-<section class="tui-space_vertical-4">
-  {{project().description}}
-</section>
-<footer>
-<div class="tui-space_top-4">
-  <button tuiButton type="button" appearance="flat" size="s" [routerLink]="['/projects', project().id]">
-    Ouvrir le projet
-  </button>
-  <    <button
+
+  <section class="project-card__description tui-space_vertical-4">
+    {{ project().description }}
+  </section>
+
+  <footer class="project-card__actions">
+
+    <button
+      tuiButton
+      appearance="primary"
+      size="s"
+      [routerLink]="['/projects', project().id]"
+    >
+      Ouvrir
+    </button>
+
+    <button
       tuiButton
       appearance="accent"
       size="s"
       iconStart="@tui.trash"
-      (click)="onDelete.emit(project().id!)">
+      (click)="onDelete.emit(project().id!)"
+    >
       Supprimer
     </button>
-  </div>
-</footer>
 
+  </footer>
+
+</div>

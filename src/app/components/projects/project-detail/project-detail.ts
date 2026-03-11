@@ -1,16 +1,14 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {TaskService} from '../../../services/task/task-service';
-import {Task} from '../../../models/task.model';
-import { TuiTable } from '@taiga-ui/addon-table';
-import {TaskForm} from '../../tasks/task-form/task-form';
-import {TaskItem} from '../../tasks/task-item/task-item';
+import {ProjectService} from '../../../services/project/project-service';
+import {Project} from '../../../models/project.model';
+import {TasksList} from '../../tasks/tasks-list/tasks-list';
+import {ProjectMemberList} from '../../project-member-list/project-member-list';
 @Component({
   selector: 'app-project-detail',
   imports: [
-    TuiTable,
-    TaskForm,
-    TaskItem
+    TasksList,
+    ProjectMemberList
 
   ],
   templateUrl: './project-detail.html',
@@ -19,23 +17,18 @@ import {TaskItem} from '../../tasks/task-item/task-item';
 export class ProjectDetail implements OnInit {
 
   private route = inject(ActivatedRoute);
-  private taskService = inject(TaskService);
+  private projectService = inject(ProjectService);
 
-  projectId = Number(this.route.snapshot.paramMap.get('id'));
-  tasks = signal<Task[]>([])
+  projectId!: number;
+  project = signal<Project | null>(null);
 
-  ngOnInit() {
-    this.taskService.getTasksByProject(this.projectId).subscribe(
-      data => this.tasks.set(data)
-    );
-  }
+  ngOnInit(): void {
+    this.projectId = Number(this.route.snapshot.paramMap.get('id'));
 
-  onTaskCreated(newTask: Task){
-    this.tasks.update(currentTasks => [...currentTasks, newTask]);
-  }
-
-  removeTaskFromList(taskId: number){
-    this.tasks.update(list => list.filter(t => t.id !== taskId))
+    this.projectService.getProjectById(this.projectId).subscribe({
+      next: project => this.project.set(project),
+      error: err => console.error('Erreur chargement projet', err),
+    });
   }
 
 }

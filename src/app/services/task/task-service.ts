@@ -2,6 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Statut, Task} from '../../models/task.model';
 import {Observable} from 'rxjs';
+import {TaskHistoryModel} from '../../models/taskHistory.model';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class TaskService {
   private readonly apiUrl : string = 'http://localhost:8081/api/tasks';
 
   getTasksByProject(projectId: number): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/projects/${projectId}`);
+    return this.http.get<Task[]>(`${this.apiUrl}/project/${projectId}`);
   }
 
   createTask(task: Task): Observable<Task>{
@@ -20,8 +21,9 @@ export class TaskService {
   }
 
   updateTask(id: number, task: Partial<Task>,memberId: number): Observable<Task>{
+    console.log(memberId)
     const headers = new HttpHeaders().set('X-Member-ID', memberId.toString());
-    return this.http.put<Task>(`${this.apiUrl}/tasks/${id}`, task, { headers: headers });
+    return this.http.put<Task>(`${this.apiUrl}/${id}`, task, { headers: headers });
   }
 
   updateTaskStatus(taskId: number, status: Statut,memberId: number): Observable<Task> {
@@ -33,8 +35,8 @@ export class TaskService {
     return this.http.delete<void>(`${this.apiUrl}/${taskId}`);
   }
 
-  getTaskHistory(taskId: number): Observable<TaskHistory[]> {
-    return this.http.get<TaskHistory[]>(`${this.apiUrl}/${taskId}/history`);
+  getTaskHistory(taskId: number): Observable<TaskHistoryModel[]> {
+    return this.http.get<TaskHistoryModel[]>(`${this.apiUrl}/${taskId}/history`);
   }
 
 }

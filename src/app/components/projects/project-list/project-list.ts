@@ -15,7 +15,7 @@ import {TuiInputRange, TuiTextarea} from '@taiga-ui/kit';
 export class ProjectList implements OnInit {
 
   private projectService = inject(ProjectService);
-  private readonly dialogs = inject(TuiDialogService)
+  private readonly dialogs = inject(TuiDialogService);
 
   projects = signal<Project[]>([])
   newProject: Project = {dateDebut: '', nom: '', description: ''};
@@ -25,7 +25,7 @@ export class ProjectList implements OnInit {
   }
 
   refreshProject(){
-    const user = JSON.parse(localStorage.getItem('user')|| '{}');
+    const user = JSON.parse(localStorage.getItem('currentUser')|| '{}');
     if(user.id){
       this.projectService.getProjectsById(user.id).subscribe({
         next: (data: Project[]) => this.projects.set(data),
@@ -35,11 +35,14 @@ export class ProjectList implements OnInit {
   }
 
   showDialog(content: TemplateRef<any>){
-    this.dialogs.open(content,{label: 'Nouveau projet', size: 'm'}).subscribe();
+    console.log('ici');
+    this.dialogs.open(content,{label: 'Nouveau projet', size: 'm'}).subscribe(() => {
+      console.log("testo");
+    });
   }
 
   submitProject(observer: any){
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const projectToSave: Project = {
       ...this.newProject,adminId: user.id
     };

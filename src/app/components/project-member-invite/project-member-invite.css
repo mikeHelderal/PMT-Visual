@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+/* bouton ouvrir la dialog */
+button[tuiButton][appearance="primary"] {
+  width: auto;
+}
+
+/* contenu de la dialog */
+.invite-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 320px;
+  max-width: 420px;
+}
+
+/* champs */
+.invite-dialog tui-textfield {
+  width: 100%;
+}
+
+/* erreurs */
+.invite-dialog tui-error {
+  margin-top: 0.25rem;
+}
+
+/* bouton submit */
+.invite-dialog button[tuiButton] {
+  margin-top: 0.5rem;
+}
+
+/* loader dans bouton */
+.invite-dialog tui-loader {
+  display: inline-flex;
+  align-items: center;
+}

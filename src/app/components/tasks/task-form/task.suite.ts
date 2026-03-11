@@ -1,9 +1,11 @@
 import {Statut, Task} from '../../../models/task.model';
-import {create, enforce, only, test, Suite} from 'vest';
+import {create, enforce, only, test} from 'vest';
 
-type ValidationFn = (data: Partial<Task>, field?: string) => void;
 
 export const taskSuite = create((data: Partial<Task>, field?: string) => {
+  if (field) {
+    only(field);
+  }
   test('nom', 'Le nom est requis', () => {
     enforce(data.nom).isNotBlank();
   });
@@ -14,6 +16,8 @@ export const taskSuite = create((data: Partial<Task>, field?: string) => {
 
   test('statut', 'Statut invalide', () => {
     const validStatuts: Statut[] = ['A_FAIRE', 'EN_COURS', 'TERMINE'];
-    enforce(validStatuts).condition((val) => validStatuts.includes(val as Statut));
+    console.log('statut dans suite =', data.statut);
+
+    enforce(validStatuts.includes(data.statut as Statut)).isTruthy();
   });
 })

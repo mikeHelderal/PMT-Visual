@@ -1,43 +1,54 @@
-<div class="tui-container tui-container_adaptive" style="max-width: 450px; margin-top: 5rem;">
+<div class="container-register" style="max-width: 450px; margin-top: 5rem;">
   <h2 class="tui-text_h3">Rejoindre PMT</h2>
 
   <form (ngSubmit)="onSubmit()" class="tui-space_top-6">
 
     <div class="tui-space_bottom-4">
-      <label tuiLabel="Nom d'utilisateur">
+      <tui-textfield>
+        <label tuiLabel>
+          Nom d'utilisateur
+        </label>
         <input
           tuiTextfield
           name="userName"
           [(ngModel)]="user.username"
-          (input)="validate('userName')"
+          (ngModelChange)="validate('username')"
         />
-      </label>
+      </tui-textfield>
     </div>
 
     <div class="tui-space_bottom-4">
-      <label tuiLabel="Email">
+      <tui-textfield>
+        <label tuiLabel>
+          Email
+        </label>
         <input
           tuiTextfield
           type="email"
           name="email"
           [(ngModel)]="user.email"
-          (input)="validate('email')"
+          (ngModelChange)="validate('email')"
         />
-      </label>
+      </tui-textfield>
     </div>
 
     <div class="tui-space_bottom-6">
-      <label tuiLabel="Mot de passe">
+      <tui-textfield>
+        <label tuiLabel>
+          Mot de passe
+        </label>
         <input
+          tuiTextfield
           type="password"
           name="password"
           [(ngModel)]="user.password"
-          (input)="validate('password')"
+          (ngModelChange)="validate('password')"
         />
-      </label>
+      </tui-textfield>
     </div>
 
     @if (result.hasErrors()) {
+
       <tui-error
         [error]="result.getErrors()[0]">
       </tui-error>
@@ -47,7 +58,10 @@
       <button
         tuiButton
         type="submit"
-        [disabled]="result.hasErrors()"
+        [disabled]="result.hasErrors() ||  result.hasErrors() ||
+    !user.username ||
+    !user.email ||
+    !user.password"
       >
         Créer mon compte
       </button>
