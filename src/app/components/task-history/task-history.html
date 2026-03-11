@@ -1,0 +1,41 @@
+<div class="tui-container">
+  <h3 tuiTitle="m" class="tui-space_bottom-4">Journal d'activité</h3>
+
+  @if (historyItems().length === 0) {
+    <p class="tui-text_body-m">Aucune trace trouvée pour cette tâche.</p>
+  } @else {
+    <div class="tui-stack tui-stack_m">
+      @for (item of historyItems(); track item.id) {
+        <div tuiCardLarge tuiAppearance="surface" class="tui-space_bottom-3">
+
+          <header >
+            <tui-avatar
+              size="s"
+              [src]="item.authorMember.user.userName"
+            ></tui-avatar>
+            <div tuiTitle>
+              {{ item.authorMember.user.userName }}
+              <div tuiSubtitle>
+                <tui-badge appearance="info" size="s">
+                  {{ item.authorMember.role.name }}
+                </tui-badge>
+              </div>
+            </div>
+          </header>
+
+          <section class="tui-space_top-2">
+            <p class="tui-text_body-m">
+              {{ item.action }}
+            </p>
+          </section>
+
+          <footer class="tui-space_top-2">
+                        <span class="tui-text_caption tui-text_secondary">
+                            {{ item.dateAction | date: 'EEEE d MMMM y, HH:mm' }}
+                        </span>
+          </footer>
+        </div>
+      }
+    </div>
+  }
+</div>

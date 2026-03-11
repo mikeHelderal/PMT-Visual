@@ -14,9 +14,14 @@ export class ProjectMemberService {
       .set('email', email)
       .set('role', roleName);
 
-    return this.http.post(`${this.apiUrl}/${projectId}`, {}, { params });  }
+    return this.http.post(`${this.apiUrl}/${projectId}/invite`, {}, { params });  }
 
   getMembers(projectId: number): Observable<any[]> {
+
     return this.http.get<any[]>(`${this.apiUrl}/${projectId}`);
+  }
+
+  removeMember(memberId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${memberId}`);
   }
 }
