@@ -31,6 +31,13 @@ export class TaskService {
     return this.http.patch<Task>(`${this.apiUrl}/${taskId}/status`, status, { headers: headers });
   }
 
+  assignTask(taskId: number, projectId: number, memberId: number) {
+    return this.http.patch<Task>(`${this.apiUrl}/${taskId}/assign`, {
+      projectId,
+      memberId,
+    });
+  }
+
   deleteTask(taskId: number): Observable<void>{
     return this.http.delete<void>(`${this.apiUrl}/${taskId}`);
   }

@@ -4,17 +4,42 @@
     <p class="tui-text_body-m">{{ project()?.description }}</p>
   </section>
 
-  <div class="project-detail-page__grid">
-    <section class="project-detail-page__members">
-      <app-project-member-list
-        [projectId]="projectId"
-      />
-    </section>
+  <nav tuiTabs class="tui-space_bottom-6">
+    <button tuiTab (click)="activeTab.set('dashboard')">
+      <tui-icon icon="@tui.layout-dashboard" class="tui-space_right-2"></tui-icon>
+      Tableau de bord
+    </button>
+    <button tuiTab (click)="activeTab.set('gestion')">
+      <tui-icon icon="@tui.settings" class="tui-space_right-2"></tui-icon>
+      Gestion du projet
+    </button>
+  </nav>
 
-    <section class="project-detail-page__tasks">
-      <app-tasks-list
-        [projectId]="projectId"
-      />
-    </section>
-  </div>
+  @switch (activeTab()){
+    @case ('dashboard'){
+      <app-project-dashboard [tasks]="tasks()!" ></app-project-dashboard>
+    }
+    @case ('gestion'){
+      <div class="project-detail-page__grid">
+        <section class="project-detail-page__members">
+          <app-project-member-list
+            [projectId]="projectId()!"
+          />
+        </section>
+
+        <section class="project-detail-page__tasks">
+          <app-tasks-list
+            [projectId]="projectId()!"
+            [tasks]="tasks()"
+            (taskCreated)="onTaskCreated($event)"
+            (taskDeleted)="removeTaskFromList($event)"
+            (taskUpdated)="loadTasks(projectId()!)"
+          />
+        </section>
+      </div>
+
+    }
+  }
+
+
 </div>

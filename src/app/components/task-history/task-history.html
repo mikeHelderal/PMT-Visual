@@ -6,18 +6,18 @@
   } @else {
     <div class="tui-stack tui-stack_m">
       @for (item of historyItems(); track item.id) {
-        <div tuiCardLarge tuiAppearance="surface" class="tui-space_bottom-3">
+        <div tuiCardLarge  class="tui-space_bottom-3">
 
           <header >
             <tui-avatar
               size="s"
-              [src]="item.authorMember.user.userName"
+              [src]="item.authorMember.username"
             ></tui-avatar>
             <div tuiTitle>
-              {{ item.authorMember.user.userName }}
+              {{ item.authorMember.username }}
               <div tuiSubtitle>
                 <tui-badge appearance="info" size="s">
-                  {{ item.authorMember.role.name }}
+                  {{ item.authorMember.role }}
                 </tui-badge>
               </div>
             </div>

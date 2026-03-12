@@ -4,11 +4,19 @@ import {ProjectService} from '../../../services/project/project-service';
 import {Project} from '../../../models/project.model';
 import {TasksList} from '../../tasks/tasks-list/tasks-list';
 import {ProjectMemberList} from '../../project-member-list/project-member-list';
+import {TuiTabs} from '@taiga-ui/kit';
+import {TuiIcon} from '@taiga-ui/core';
+import {Task} from '../../../models/task.model';
+import {ProjectDashboard} from '../../project-dashboard/project-dashboard';
+import {TaskService} from '../../../services/task/task-service';
 @Component({
   selector: 'app-project-detail',
   imports: [
     TasksList,
-    ProjectMemberList
+    ProjectMemberList,
+    TuiTabs,
+    TuiIcon,
+    ProjectDashboard
 
   ],
   templateUrl: './project-detail.html',
@@ -18,17 +26,45 @@ export class ProjectDetail implements OnInit {
 
   private route = inject(ActivatedRoute);
   private projectService = inject(ProjectService);
+  private taskService = inject(TaskService);
 
-  projectId!: number;
+  readonly activeTab = signal<'dashboard' | 'gestion'>('dashboard')
+
+  projectId = signal<number | null>(null);
   project = signal<Project | null>(null);
+  tasks= signal<Task[]>([]);
 
   ngOnInit(): void {
-    this.projectId = Number(this.route.snapshot.paramMap.get('id'));
+    this.projectId.set(Number(this.route.snapshot.paramMap.get('id')));
 
-    this.projectService.getProjectById(this.projectId).subscribe({
-      next: project => this.project.set(project),
+    this.projectService.getProjectById(this.projectId()!).subscribe({
+      next: (project) => {
+        this.project.set(project)
+        if(project.id){
+          this.loadTasks(project.id);
+        }
+      },
       error: err => console.error('Erreur chargement projet', err),
     });
   }
+
+  protected loadTasks(projectId: number): void {
+    this.taskService.getTasksByProject(projectId).subscribe({
+      next: data => this.tasks.set(data),
+      error: err => console.error('Erreur lors du chargement des tâches', err),
+    });
+  }
+
+
+
+  onTaskCreated(newTask: Task,): void {
+    this.tasks.update(currentTasks => [...currentTasks, newTask]);
+  }
+
+  removeTaskFromList(taskId: number): void {
+    this.tasks.update(list => list.filter(task => task.id !== taskId));
+  }
+
+
 
 }

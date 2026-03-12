@@ -1,0 +1,34 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.container-detail {
+  width: 100%;
+}
+
+.container-detail h1 {
+  margin-bottom: 1rem;
+}
+
+.container-detail table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.container-detail th,
+.container-detail td {
+  text-align: left;
+  vertical-align: middle;
+}
+
+.container-detail hr {
+  border: none;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.container-detail button[tuiButton] {
+  width: auto;
+}

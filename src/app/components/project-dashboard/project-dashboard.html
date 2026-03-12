@@ -1,0 +1,102 @@
+
+
+<section class="dashboard-stats tui-space_bottom-8">
+  <div tuiCardLarge  class="stats-card">
+    <div class="stats-content">
+      <div class="chart-wrapper">
+        <tui-pie-chart
+          [value]="chartValues()"
+          size="m"
+        ></tui-pie-chart>
+        <div class="chart-label">
+          <span class="tui-text_h4">{{ completionPercentage() }}%</span>
+          <span class="tui-text_body-s">Terminé</span>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-item">
+          <span class="tui-text_body-s">Total</span>
+          <span class="tui-text_h5">{{ tasks().length }}</span>
+        </div>
+        <div class="kpi-item">
+          <span class="tui-text_body-s">Critiques</span>
+          <span class="tui-text_h5 tui-status_error">
+           {{highPriorityCount()}}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="dashboard-kanban">
+  <div class="kanban-column">
+    <div class="column-header">
+      <tui-badge appearance="info" >{{todoTasks().length.toString()}}</tui-badge>
+      <h3>À FAIRE</h3>
+    </div>
+
+    <div class="column-content">
+      @for (task of todoTasks(); track task.id) {
+        <div tuiCardLarge  class="task-card">
+          <header tuiHeader>
+            <h4 tuiTitle>{{ task.nom }}</h4>
+            <tui-badge size="s" [appearance]="getPriorityStatus(task.priorite)">
+              {{ task.priorite }}
+            </tui-badge>
+          </header>
+          <p class="tui-text_body-s">{{ task.description }}</p>
+          <div class="task-footer">
+            <tui-icon icon="@tui.user" ></tui-icon>
+            <span class="tui-text_body-s-2">{{ task.assignee?.username || 'Non assigné' }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+
+  <div class="kanban-column">
+    <div class="column-header">
+      <tui-badge appearance="warning">{{ inProgressTasks().length.toString()}}</tui-badge>
+      <h3>EN COURS</h3>
+    </div>
+    <div class="column-content">
+      @for (task of inProgressTasks(); track task.id) {
+        <div tuiCardLarge  class="task-card task-card--progress">
+          <header tuiHeader>
+            <h4 tuiTitle>{{ task.nom }}</h4>
+            <tui-badge size="s" [appearance]="getPriorityStatus(task.priorite)">{{ task.priorite }}</tui-badge>
+          </header>
+         <p class="tui-text_body-s">{{task.description}}</p>
+          <div class="task-footer">
+            <tui-icon icon="@tui.user" ></tui-icon>
+            <span class="tui-text_body-s-2">{{ task.assignee?.username || 'Non assigné' }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="kanban-column">
+    <div class="column-header">
+      <tui-badge appearance="positive" >{{doneTasks().length.toString()}}</tui-badge>
+      <h3>TERMINÉ</h3>
+    </div>
+    <div class="column-content">
+      @for (task of doneTasks(); track task.id) {
+        <div tuiCardLarge  class="task-card task-card--done">
+          <header tuiHeader>
+            <h4 tuiTitle>{{ task.nom }}</h4>
+            <tui-badge size="s" [appearance]="getPriorityStatus(task.priorite)">{{ task.priorite }}</tui-badge>
+          </header>
+          <p class="tui-text_body-s">{{task.description}}</p>
+          <div class="task-footer">
+            <tui-icon icon="@tui.user" ></tui-icon>
+            <span class="tui-text_body-s-2">{{ task.assignee?.username || 'Non assigné' }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

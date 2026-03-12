@@ -1,0 +1,54 @@
+<div class="container-detail">
+  <h1 class="tui-text_h4 tui-space_bottom-6">Gestion des tâches</h1>
+
+  <button
+    tuiButton
+    appearance="primary"
+    size="m"
+    (click)="openCreateTaskDialog(createTask)"
+    class="tui-space_bottom-6"
+  >
+    Ajouter une tâche
+  </button>
+
+  <hr class="tui-space_vertical-8"/>
+
+  <table tuiTable [columns]="['nom', 'priorite', 'statut', 'echeance','attribué à ', 'action']">
+    <thead>
+    <tr tuiThGroup>
+      <th tuiTh>Tâche</th>
+      <th tuiTh>Priorité</th>
+      <th tuiTh>Statut</th>
+      <th tuiTh>Échéance</th>
+      <th tuiTh>Attribué à</th>
+      <th tuiTh>Action</th>
+    </tr>
+    </thead>
+
+    <tbody tuiTbody>
+      @for(task of tasks(); track task.id){
+        <tr
+          app-task-item
+          [task]="task"
+          [projectId]="projectId()"
+          (taskDeleted)="onTaskDeleted($event)"
+          (taskUpdated)="onTaskUpdated()"
+        ></tr>
+      } @empty {
+        <tr>
+          <td colspan="6" class="tui-text_body-m tui-space_vertical-4">
+            Aucune tâche pour le moment
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<ng-template #createTask let-observer>
+  <app-task-form
+    [projectId]="projectId()"
+    (taskCreated)="onTaskCreated($event, observer)"
+    class="task-modal-form"
+  />
+</ng-template>

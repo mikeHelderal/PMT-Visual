@@ -33,7 +33,7 @@ export class TaskForm {
     nom: '',
     description: '',
     priorite: 'MOYENNE',
-    statut: 'A_FAIRE',
+    status: 'A_FAIRE',
     dateEcheance: undefined
   };
 
@@ -91,7 +91,7 @@ export class TaskForm {
   }
 
   private resetForm(saveTask : Task): void {
-    this.newTask = {nom: '', priorite: 'MOYENNE', statut: 'A_FAIRE'};
+    this.newTask = {nom: '', priorite: 'MOYENNE', status: 'A_FAIRE'};
     this.touched = {
       nom: false,
     };
