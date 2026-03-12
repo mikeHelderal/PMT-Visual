@@ -1,0 +1,60 @@
+import {Component, inject, input, OnInit, output, TemplateRef} from '@angular/core';
+import {TaskForm} from '../task-form/task-form';
+import {TaskItem} from '../task-item/task-item';
+import {TuiTableDirective, TuiTableTbody, TuiTableTh, TuiTableThGroup} from '@taiga-ui/addon-table';
+import {TuiButton, TuiDialogService} from '@taiga-ui/core';
+import {Task} from '../../../models/task.model';
+
+@Component({
+  selector: 'app-tasks-list',
+  imports: [
+    TaskForm,
+    TaskItem,
+    TuiTableDirective,
+    TuiTableTbody,
+    TuiTableTh,
+    TuiTableThGroup,
+    TuiButton
+  ],
+  templateUrl: './tasks-list.html',
+  styleUrl: './tasks-list.css',
+})
+export class TasksList implements OnInit {
+
+  private readonly dialogs = inject(TuiDialogService);
+
+
+  readonly projectId = input.required<number>();
+  readonly tasks = input.required<Task[]>();
+
+  readonly taskCreated = output<Task>();
+  readonly taskDeleted = output<number>();
+  readonly taskUpdated = output<void>();
+  ngOnInit(): void {
+
+  }
+
+
+  openCreateTaskDialog(content: TemplateRef<unknown>): void {
+    this.dialogs.open(content, {
+      label: 'Nouvelle tâche',
+      size: 'm',
+    }).subscribe({
+      complete: () => console.log('Dialog fermée'),
+    });
+  }
+  onTaskCreated(newTask: Task, observer: { complete: () => void }): void {
+    this.taskCreated.emit(newTask);
+    observer.complete();
+  }
+
+  onTaskUpdated(){
+    this.taskUpdated.emit();
+  }
+
+  onTaskDeleted(taskId: number): void {
+    this.taskDeleted.emit(taskId);
+  }
+
+
+}

@@ -3,7 +3,8 @@ export interface Task {
   nom: string;
   description?: string;
   priorite: Priorite ;
-  statut: Statut ;
+  status: Statut ;
+  assignee?: Assignee ;
   dateEcheance?: string;
   dateFinReelle?: string ;
   project: {id: number};
@@ -13,3 +14,8 @@ export type Statut = 'A_FAIRE' | 'EN_COURS' | 'TERMINE'
 
 export type Priorite = 'HAUTE' | 'MOYENNE' | 'BASSE' ;
 
+export interface Assignee {
+  email : string ;
+  id: string;
+  username: string
+}

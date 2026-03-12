@@ -17,15 +17,15 @@
           <header tuiHeader>
             <tui-avatar
               size="m"
-              [src]="member.user.username"
+              [src]="member.username"
               class="tui-space_right-3"
             ></tui-avatar>
 
             <div tuiTitle>
-              {{ member.user.username }}
+              {{ member.username }}
               <div tuiSubtitle>
                 <tui-badge appearance="neutral" size="m">
-                  {{ member.role.libelle }}
+                  {{ member.role }}
                 </tui-badge>
                 <span class="tui-text_caption tui-space_left-2">
                   Inscrit le {{ member.dateArrivee | date : 'dd/MM/yyyy' }}

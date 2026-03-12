@@ -1,0 +1,39 @@
+<button
+  tuiIconButton
+  appearance="flat"
+  size="s"
+  type="button"
+  [iconStart]="task().assignee ? '@tui.repeat' : '@tui.plus'"
+  class="tui-space_bottom-6"
+  (click)="openAssignDialog(assignMember)"
+></button>
+
+<ng-template #assignMember  let-observer >
+  <div class="assign-dialog">
+    <tui-textfield [stringify]="stringify" >
+      <label tuiLabel>Attribuer à </label>
+      <input
+      tuiSelect
+      [ngModel]="newMember()"
+      (ngModelChange)="newMember.set($event)"
+      >
+
+      <tui-data-list-wrapper
+      *tuiTextfieldDropdown
+      new
+      [items]="listMember()"
+      />
+    </tui-textfield>
+
+    <button
+      tuiButton
+      appearance="primary"
+      type="button"
+      class="tui-width_full"
+      (click)="assign(observer)"
+    >
+      Assigner
+    </button>
+
+  </div>
+</ng-template>

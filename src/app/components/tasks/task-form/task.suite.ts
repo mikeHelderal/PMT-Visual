@@ -16,8 +16,8 @@ export const taskSuite = create((data: Partial<Task>, field?: string) => {
 
   test('statut', 'Statut invalide', () => {
     const validStatuts: Statut[] = ['A_FAIRE', 'EN_COURS', 'TERMINE'];
-    console.log('statut dans suite =', data.statut);
+    console.log('statut dans suite =', data.status);
 
-    enforce(validStatuts.includes(data.statut as Statut)).isTruthy();
+    enforce(validStatuts.includes(data.status as Statut)).isTruthy();
   });
 })

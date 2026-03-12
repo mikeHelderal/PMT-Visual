@@ -33,13 +33,14 @@
     <button
       tuiBadge
       type="button"
-      [appearance]="task().statut === 'TERMINE' ? 'success' : (task().statut === 'EN_COURS' ? 'warning' : 'neutral')"
+      [appearance]="task().status === 'TERMINE' ? 'success' : (task().status === 'EN_COURS' ? 'warning' : 'neutral')"
       (click)="changeStatus()"
     >
-      {{ task().statut }}
+      {{ task().status }}
     </button>
   </td>
   <td tuiTd>{{task().dateEcheance | date:'dd/MM/yyyy'}}</td>
+  <td tuiTd> {{task().assignee ? task().assignee?.username : 'aucun'}} </td>
   <td tuiTd>
     <button
       tuiIconButton
@@ -50,4 +51,9 @@
       (click)="onDelete()"
       title="Supprimer la tâche"
     ></button>
+    <app-task-add-member
+      [task]="task()!"
+      [projectId]="projectId()"
+      (memberAdded)="updateTask()"
+    ></app-task-add-member>
   </td>
