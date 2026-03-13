@@ -1,6 +1,7 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {Observable, tap} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {ProjectStateService} from '../project/project-state-service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,17 +11,43 @@ export class AuthService {
   private apiUrl: string = "http://localhost:8081/api/auth";
   private http = inject(HttpClient);
 
-  currentUser = signal<any>(JSON.parse(localStorage.getItem('user') || 'null'));
+  private projectStateService: ProjectStateService = inject(ProjectStateService);
+
+  currentUser = signal<any>(null);
+
+  constructor() {
+    // 1. Récupération au rafraîchissement de la page (F5)
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      const user = JSON.parse(savedUser);
+      this.currentUser.set(user);
+      this.projectStateService.setUserId(user.id);
+    }
+  }
 
   register(user: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, user);
   }
 
   login(credentials: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
+    // On définit explicitement que l'on envoie du JSON
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.post(`${this.apiUrl}/login`, credentials, httpOptions).pipe(
       tap((response: any) => {
-        localStorage.setItem('user', JSON.stringify(response));
+        localStorage.setItem('currentUser', JSON.stringify(response));
         this.currentUser.set(response);
+
+        // On synchronise l'ID pour ton ProjectStateService
+        if (response && response.id) {
+          this.projectStateService.setUserId(response.id);
+        }
+
+        console.log('Login réussi :', response);
       })
     );
   }
@@ -29,9 +56,6 @@ export class AuthService {
     return this.currentUser()?.memberId || null;
   }
 
-  isAdmin(): boolean {
-    return this.currentUser()?.role === 'ADMIN';
-  }
 
   logout() {
     localStorage.removeItem('user');

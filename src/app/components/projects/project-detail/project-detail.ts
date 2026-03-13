@@ -10,6 +10,7 @@ import {Task} from '../../../models/task.model';
 import {ProjectDashboard} from '../../project-dashboard/project-dashboard';
 import {TaskService} from '../../../services/task/task-service';
 import {AuthService} from '../../../services/auth/auth';
+import {ProjectStateService} from '../../../services/project/project-state-service';
 @Component({
   selector: 'app-project-detail',
   imports: [
@@ -29,6 +30,7 @@ export class ProjectDetail implements OnInit {
   private projectService = inject(ProjectService);
   private taskService = inject(TaskService);
   private authService = inject(AuthService);
+  private projectStateService = inject(ProjectStateService);
 
   readonly activeTab = signal<'dashboard' | 'gestion'>('dashboard')
 
@@ -44,6 +46,7 @@ export class ProjectDetail implements OnInit {
         this.project.set(project)
         if(project.id){
           this.loadTasks(project.id);
+          this.projectStateService.setProject(project);
         }
       },
       error: err => console.error('Erreur chargement projet', err),
