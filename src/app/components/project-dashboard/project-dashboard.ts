@@ -1,8 +1,9 @@
-import {Component, computed, input} from '@angular/core';
+import {Component, computed, input, signal} from '@angular/core';
 import {TuiBadge} from '@taiga-ui/kit';
 import {TuiCard, TuiHeader} from '@taiga-ui/layout';
 import { TuiIcon, TuiTitle} from '@taiga-ui/core';
 import {TuiPieChart} from '@taiga-ui/addon-charts';
+import {Task} from '../../models/task.model';
 
 @Component({
   selector: 'app-project-dashboard',
@@ -21,9 +22,12 @@ export class ProjectDashboard {
 
   readonly tasks = input.required<any[]>();
 
+  overdueCount = signal<number>(0);
+
   readonly todoTasks = computed(() => this.tasks().filter(t => t.status === 'A_FAIRE'));
   readonly inProgressTasks = computed(() => this.tasks().filter(t => t.status === "EN_COURS"));
   readonly doneTasks = computed(() => this.tasks().filter(t => t.status === 'TERMINE'));
+
 
   readonly chartValues = computed(() => [
     this.todoTasks().length,
@@ -47,4 +51,27 @@ export class ProjectDashboard {
       default: return 'info';
     }
   }
+
+  calculateKPIs(task: Task[]){
+    const now = new Date();
+
+    const overdueTasks = task.filter(t => {
+      const dEcheance = t.dateEcheance;
+
+      if (!dEcheance) {
+        return false;
+      }
+      const deadline = new Date(dEcheance);
+      if(t.status === 'TERMINE' && t.dateFinReelle){
+        return new Date(t.dateFinReelle)> deadline;
+      }
+      return t.status !== 'TERMINE' && deadline < now ;
+    });
+    this.overdueCount.set(overdueTasks.length);
+  }
+
+
+
+
+
 }

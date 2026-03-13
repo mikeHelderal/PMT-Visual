@@ -3,6 +3,7 @@ import {ProjectMemberService} from '../../../services/projectMember/project-memb
 import {TuiAlertService, TuiButton, TuiTextfield} from '@taiga-ui/core';
 import {FormsModule} from '@angular/forms';
 import {TuiChevron, TuiDataListWrapper, TuiSelect} from '@taiga-ui/kit';
+import {AuthService} from '../../../services/auth/auth';
 
 @Component({
   selector: 'app-project-members',
@@ -19,6 +20,7 @@ import {TuiChevron, TuiDataListWrapper, TuiSelect} from '@taiga-ui/kit';
 })
 export class ProjectMembers {
   private readonly memberService = inject(ProjectMemberService);
+  private readonly authService = inject(AuthService);
   private readonly alerts = inject(TuiAlertService);
 
   projectId = input.required<number>();
@@ -29,10 +31,14 @@ export class ProjectMembers {
 
   onAddMember(): void {
     if (!this.email()) return;
+    const requesterId = this.authService.getCurrentMemberId();
+    if (!requesterId) {
+      console.error("Impossible d'inviter un membre : Utilisateur non identifié");
+      return;
+    }
 
-    this.memberService.addMember(this.projectId(), this.email(), this.role()).subscribe({
+    this.memberService.addMember(this.projectId(), this.email(), this.role(),requesterId).subscribe({
       next: () => {
-
         this.alerts.open(`L'utilisateur a été ajouté au projet !`, {
           label: 'Succès',
           appearance: 'success',
@@ -41,12 +47,17 @@ export class ProjectMembers {
         this.email.set('');
       },
       error: (err) => {
-        const errorMsg = err.error?.message || 'Une erreur est survenue';
-        this.alerts.open(errorMsg, {
-          label: 'Erreur',
-          appearance: 'error',
-          autoClose: 3000}).subscribe();
-      }
+        if (err.status === 403) {
+          alert("Action refusée : Vous n'avez pas les droits d'administrateur.");
+        }else{
+          const errorMsg = err.error?.message || 'Une erreur est survenue';
+          this.alerts.open(errorMsg, {
+            label: 'Erreur',
+            appearance: 'error',
+            autoClose: 3000}).subscribe();
+        }
+        }
+
     });
   }
 }

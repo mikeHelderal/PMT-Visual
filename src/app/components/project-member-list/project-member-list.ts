@@ -1,11 +1,12 @@
 import {Component, effect, inject, input, signal} from '@angular/core';
 import {ProjectMember} from '../../models/projectMember.model';
 import {ProjectMemberService} from '../../services/projectMember/project-member';
-import { TuiButton, TuiLoader, TuiTitle} from '@taiga-ui/core';
+import {TuiAlertService, TuiButton, TuiLoader, TuiTitle} from '@taiga-ui/core';
 import {TuiAvatar, TuiBadge} from '@taiga-ui/kit';
 import {TuiCardLarge, TuiHeader} from '@taiga-ui/layout';
 import {DatePipe} from '@angular/common';
 import {ProjectMemberInvite} from '../project-member-invite/project-member-invite';
+import {AuthService} from '../../services/auth/auth';
 
 @Component({
   selector: 'app-project-member-list',
@@ -25,12 +26,15 @@ import {ProjectMemberInvite} from '../project-member-invite/project-member-invit
 })
 export class ProjectMemberList {
 
+  private readonly authService: AuthService = inject(AuthService);
+  private readonly alerts = inject(TuiAlertService);
+  private readonly memberService = inject(ProjectMemberService);
+
   readonly projectId = input.required<number>();
 
   readonly members = signal<ProjectMember[]>([]);
   readonly isLoading = signal<boolean>(false)
 
-  private readonly memberService = inject(ProjectMemberService);
 
   constructor() {
     effect(() => {
@@ -72,11 +76,33 @@ export class ProjectMemberList {
 
 
   deleteMember(id: number): void {
+    const requesterId = this.authService.getCurrentMemberId();
+    if (!requesterId) {
+      console.error("Impossible d'inviter un membre : Utilisateur non identifié");
+      return;
+    }
 
     if (confirm('Voulez-vous vraiment retirer ce membre ?')) {
-      this.memberService.removeMember(id).subscribe(() => {
-        this.members.update(prev => prev.filter(m => m.id !== id));
-      });
+      this.memberService.removeMember(id,requesterId).subscribe({
+        next: () => {
+          this.alerts.open(`L'utilisateur a été supprimé du projet !`, {
+            label: 'Succès',
+            appearance: 'success',
+            autoClose: 3000
+          }).subscribe();
+        },
+        error: (err) => {
+          if (err.status === 403) {
+            alert("Action refusée : Vous n'avez pas les droits d'administrateur.");
+          }else{
+            const errorMsg = err.error?.message || 'Une erreur est survenue';
+            this.alerts.open(errorMsg, {
+              label: 'Erreur',
+              appearance: 'error',
+              autoClose: 3000}).subscribe();
+          }
+        }
+      })
     }
   }
 }

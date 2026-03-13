@@ -6,6 +6,7 @@ import {DatePipe} from '@angular/common';
 import {TaskService} from '../../../services/task/task-service';
 import {TuiButton, TuiTextfield} from '@taiga-ui/core';
 import {TaskAddMember} from '../task-add-member/task-add-member';
+import {AuthService} from '../../../services/auth/auth';
 
 @Component({
   selector: 'tr [app-task-item]',
@@ -23,21 +24,24 @@ import {TaskAddMember} from '../task-add-member/task-add-member';
 export class TaskItem {
 
   private taskService = inject(TaskService);
+  private authService: AuthService = inject(AuthService);
   private readonly nextStatus: Record<Statut,  Statut> = {
     'A_FAIRE': 'EN_COURS',
     'EN_COURS': 'TERMINE',
     'TERMINE': 'A_FAIRE'
   }
   private readonly priorities: Priorite[] = ['BASSE', 'MOYENNE', 'HAUTE'];
-  private readonly memberId = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  private readonly member = JSON.parse(localStorage.getItem('currentUser') || '{}');
   public task = input.required<Task>();
   public projectId = input.required<number>();
   public taskDeleted = output<number>();
   public taskUpdated = output<void>() ;
   public isEditing = signal<boolean>(false);
+  public isadmin = signal<boolean>(this.authService.isAdmin());
+
 
   changeStatus(){
-    const memberId = Number(this.memberId.id);
+    const memberId = Number(this.member.id);
 
     if (!memberId) {
       console.error('projectMemberId introuvable');
@@ -47,7 +51,7 @@ export class TaskItem {
     const currentStatus: Statut = this.task().status;
     const next: Statut = this.nextStatus[currentStatus] || 'A_FAIRE';
 
-    this.taskService.updateTaskStatus(this.task().id!, next,Number(this.memberId.id!)).subscribe({
+    this.taskService.updateTaskStatus(this.task().id!, next,Number(this.member.id!)).subscribe({
       next: () => {
         this.task().status = next;
         this.taskUpdated.emit()
@@ -57,7 +61,7 @@ export class TaskItem {
   }
 
   changePriority(){
-    const memberId = Number(this.memberId.id);
+    const memberId = Number(this.member.id);
 
     if (!memberId) {
       console.error('projectMemberId introuvable');
@@ -66,7 +70,7 @@ export class TaskItem {
     const currentIndex = this.priorities.indexOf(this.task().priorite as any);
     const nextPriority: Priorite = this.priorities[(currentIndex + 1) % this.priorities.length];
 
-    this.taskService.updateTask(this.task().id!, { priorite: nextPriority },Number(this.memberId.id!)).subscribe(() => {
+    this.taskService.updateTask(this.task().id!, { priorite: nextPriority },Number(this.member.id!)).subscribe(() => {
       this.task().priorite = nextPriority;
       this.taskUpdated.emit();
     });
@@ -91,14 +95,14 @@ export class TaskItem {
 
   saveName(newName: string) {
     console.log('change nom ')
-    const memberId = Number(this.memberId);
+    const memberId = Number(this.member.id);
 
     if (!memberId) {
       console.error('projectMemberId introuvable');
       return;
     }
     if (newName !== this.task().nom) {
-      this.taskService.updateTask(this.task().id!, { nom: newName },Number(this.memberId!)).subscribe({
+      this.taskService.updateTask(this.task().id!, { nom: newName },Number(this.member.id!)).subscribe({
         next: () => {
           this.task().nom = newName; // Mise à jour locale
           this.isEditing.set(false);
@@ -112,7 +116,7 @@ export class TaskItem {
   onDelete(){
     const id = this.task().id;
     if (id && confirm('Voulez-vous supprimer cette tâche ?')) {
-      this.taskService.deleteTask(id).subscribe({
+      this.taskService.deleteTask(id,this.member.id).subscribe({
         next: () => {
           this.taskDeleted.emit(id);
         },

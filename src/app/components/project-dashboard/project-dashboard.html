@@ -16,6 +16,12 @@
 
       <div class="kpi-grid">
         <div class="kpi-item">
+          <span class="tui-text_body-s">En retard</span>
+          <span class="tui-text_h5" [class.tui-status_error]="overdueCount() > 0">
+            {{ overdueCount() }}
+          </span>
+        </div>
+        <div class="kpi-item">
           <span class="tui-text_body-s">Total</span>
           <span class="tui-text_h5">{{ tasks().length }}</span>
         </div>

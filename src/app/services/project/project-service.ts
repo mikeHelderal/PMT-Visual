@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Project} from '../../models/project.model';
 
@@ -28,8 +28,9 @@ export class ProjectService {
     return this.http.get<Project>(`${this.apiUrl}/project/${id}`);
   }
 
-  deleteProject(id: number): Observable<void>{
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteProject(id: number,requesterId: number): Observable<void>{
+    const headers = new HttpHeaders().set('X-Member-ID', requesterId.toString());
+    return this.http.delete<void>(`${this.apiUrl}/${id}`,{headers});
   }
 
 }
