@@ -22,15 +22,19 @@
       Ouvrir
     </button>
 
-    <button
-      tuiButton
-      appearance="accent"
-      size="s"
-      iconStart="@tui.trash"
-      (click)="onDelete.emit(project().id!)"
-    >
-      Supprimer
-    </button>
+    @if (canDelete){
+      <button
+        tuiButton
+        appearance="accent"
+        size="s"
+        iconStart="@tui.trash"
+        (click)="onDelete.emit(project().id!)"
+      >
+        Supprimer
+      </button>
+    }
+
+
 
   </footer>
 

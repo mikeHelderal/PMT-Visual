@@ -1,10 +1,11 @@
 import {Component, inject, OnInit, signal, TemplateRef} from '@angular/core';
 import {ProjectCard} from '../project-card/project-card';
-import {TuiButton, TuiDialogService, TuiTextfield} from '@taiga-ui/core';
+import {TuiAlertService, TuiButton, TuiDialogService, TuiTextfield} from '@taiga-ui/core';
 import {ProjectService} from '../../../services/project/project-service';
 import {Project} from '../../../models/project.model';
 import {FormsModule} from '@angular/forms';
 import {TuiInputRange, TuiTextarea} from '@taiga-ui/kit';
+import {AuthService} from '../../../services/auth/auth';
 
 @Component({
   selector: 'app-project-list',
@@ -16,6 +17,8 @@ export class ProjectList implements OnInit {
 
   private projectService = inject(ProjectService);
   private readonly dialogs = inject(TuiDialogService);
+  private readonly authService: AuthService = inject(AuthService);
+  private readonly alerts = inject(TuiAlertService);
 
   projects = signal<Project[]>([])
   newProject: Project = {dateDebut: '', nom: '', description: ''};
@@ -54,15 +57,23 @@ export class ProjectList implements OnInit {
       }
     })
   }
+  deleteProject(id: number) {
+    const requesterId = this.authService.getCurrentMemberId();
 
-  deleteProject(id: number){
-    if(confirm('Supprimer ce projet ?')){
-      this.projectService.deleteProject(id).subscribe({
+    if (!requesterId) return;
+
+    if (confirm('Supprimer ce projet ?')) {
+      this.projectService.deleteProject(id, requesterId!).subscribe({
         next: () => {
           this.projects.update(list => list.filter(p => p.id !== id));
+
+          this.alerts.open('Projet supprimé').subscribe();
         },
-        error: (err) => console.error('Erreur suppression', err)
-      })
+        error: (err) => {
+          console.error('Erreur suppression', err);
+          this.alerts.open('Action non autorisée').subscribe();
+        }
+      });
     }
   }
 

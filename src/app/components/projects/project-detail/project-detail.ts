@@ -9,6 +9,7 @@ import {TuiIcon} from '@taiga-ui/core';
 import {Task} from '../../../models/task.model';
 import {ProjectDashboard} from '../../project-dashboard/project-dashboard';
 import {TaskService} from '../../../services/task/task-service';
+import {AuthService} from '../../../services/auth/auth';
 @Component({
   selector: 'app-project-detail',
   imports: [
@@ -27,6 +28,7 @@ export class ProjectDetail implements OnInit {
   private route = inject(ActivatedRoute);
   private projectService = inject(ProjectService);
   private taskService = inject(TaskService);
+  private authService = inject(AuthService);
 
   readonly activeTab = signal<'dashboard' | 'gestion'>('dashboard')
 
@@ -62,6 +64,23 @@ export class ProjectDetail implements OnInit {
   }
 
   removeTaskFromList(taskId: number): void {
+
+    const currentMemberId = this.authService.getCurrentMemberId();
+
+    if(confirm('Etes-vous sûr de vouloir supprimer cette tâche ?')){
+      this.taskService.deleteTask(taskId, currentMemberId!).subscribe({
+        next: () => {
+          this.loadTasks(this.projectId()!);
+        },
+        error: (err) => {
+          if(err.status === 403){
+            alert("Action refusée : vous n'êtes pas administrateur");
+          }
+        }
+      })
+    }
+
+
     this.tasks.update(list => list.filter(task => task.id !== taskId));
   }
 

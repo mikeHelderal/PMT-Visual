@@ -4,6 +4,7 @@ import {INVITE_SUITE} from './project-member-validation';
 import {FormsModule} from '@angular/forms';
 import {TuiButton, TuiDialogService, TuiError, TuiLabel, TuiLoader, TuiTextfield} from '@taiga-ui/core';
 import {TuiChevron, TuiDataListWrapper, TuiSelect} from '@taiga-ui/kit';
+import {AuthService} from '../../services/auth/auth';
 
 @Component({
   selector: 'app-project-member-invite',
@@ -27,6 +28,7 @@ export class ProjectMemberInvite {
   readonly memberAdded = output<void>();
 
   private readonly memberService = inject(ProjectMemberService);
+  private readonly authService = inject(AuthService);
   private readonly dialogs = inject(TuiDialogService);
 
 
@@ -58,15 +60,26 @@ export class ProjectMemberInvite {
 
     if (report.hasErrors()) return;
 
+    const requesterId = this.authService.getCurrentMemberId();
+    if (!requesterId) {
+      console.error("Impossible d'inviter un membre : Utilisateur non identifié");
+      return;
+    }
+
     this.isLoading.set(true);
-    this.memberService.addMember(this.projectId(), this.form.email, this.form.roleName).subscribe({
+    this.memberService.addMember(this.projectId(), this.form.email, this.form.roleName,requesterId).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.form = { email: '', roleName: 'MEMBER' };
         this.result.set(INVITE_SUITE.get()); // Reset validation
         this.memberAdded.emit();
       },
-      error: () => this.isLoading.set(false)
+      error: (err) => {
+        this.isLoading.set(false);
+        if (err.status === 403) {
+          alert("Action refusée : Vous n'avez pas les droits d'administrateur.");
+        }
+      }
     });
   }
 }

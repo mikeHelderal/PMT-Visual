@@ -42,15 +42,18 @@
   <td tuiTd>{{task().dateEcheance | date:'dd/MM/yyyy'}}</td>
   <td tuiTd> {{task().assignee ? task().assignee?.username : 'aucun'}} </td>
   <td tuiTd>
-    <button
-      tuiIconButton
-      appearance="flat"
-      size="s"
-      iconStart="@tui.trash"
-      type="button"
-      (click)="onDelete()"
-      title="Supprimer la tâche"
-    ></button>
+    @if(isadmin()){
+      <button
+        tuiIconButton
+        appearance="flat"
+        size="s"
+        iconStart="@tui.trash"
+        type="button"
+        (click)="onDelete()"
+        title="Supprimer la tâche"
+      ></button>
+    }
+
     <app-task-add-member
       [task]="task()!"
       [projectId]="projectId()"

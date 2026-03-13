@@ -16,8 +16,9 @@ export class TaskService {
     return this.http.get<Task[]>(`${this.apiUrl}/project/${projectId}`);
   }
 
-  createTask(task: Task): Observable<Task>{
-    return this.http.post<Task>(this.apiUrl, task);
+  createTask(task: Task, memberId: number): Observable<Task>{
+    const headers = new HttpHeaders().set('X-Member-ID', memberId.toString());
+    return this.http.post<Task>(this.apiUrl, task, {headers});
   }
 
   updateTask(id: number, task: Partial<Task>,memberId: number): Observable<Task>{
@@ -38,8 +39,9 @@ export class TaskService {
     });
   }
 
-  deleteTask(taskId: number): Observable<void>{
-    return this.http.delete<void>(`${this.apiUrl}/${taskId}`);
+  deleteTask(taskId: number, memberId: number): Observable<void>{
+    const headers = new HttpHeaders().set('X-Member-ID', memberId.toString());
+    return this.http.delete<void>(`${this.apiUrl}/${taskId}`, {headers});
   }
 
   getTaskHistory(taskId: number): Observable<TaskHistoryModel[]> {
