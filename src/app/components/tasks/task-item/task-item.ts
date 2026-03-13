@@ -1,4 +1,4 @@
-import {Component, inject, input, output, signal} from '@angular/core';
+import {Component, inject, input, OnInit, output, signal} from '@angular/core';
 import {Priorite, Statut, Task} from '../../../models/task.model';
 import {TuiTable} from '@taiga-ui/addon-table';
 import {TuiBadge} from '@taiga-ui/kit';
@@ -6,7 +6,7 @@ import {DatePipe} from '@angular/common';
 import {TaskService} from '../../../services/task/task-service';
 import {TuiButton, TuiTextfield} from '@taiga-ui/core';
 import {TaskAddMember} from '../task-add-member/task-add-member';
-import {AuthService} from '../../../services/auth/auth';
+import {ProjectStateService} from '../../../services/project/project-state-service';
 
 @Component({
   selector: 'tr [app-task-item]',
@@ -21,10 +21,15 @@ import {AuthService} from '../../../services/auth/auth';
   templateUrl: './task-item.html',
   styleUrl: './task-item.css',
 })
-export class TaskItem {
+export class TaskItem implements OnInit {
+  ngOnInit(): void {
+    this.role.set(this.projectStateService.role)
+
+  }
 
   private taskService = inject(TaskService);
-  private authService: AuthService = inject(AuthService);
+  private readonly projectStateService: ProjectStateService = inject(ProjectStateService);
+
   private readonly nextStatus: Record<Statut,  Statut> = {
     'A_FAIRE': 'EN_COURS',
     'EN_COURS': 'TERMINE',
@@ -37,7 +42,9 @@ export class TaskItem {
   public taskDeleted = output<number>();
   public taskUpdated = output<void>() ;
   public isEditing = signal<boolean>(false);
-  public isadmin = signal<boolean>(this.authService.isAdmin());
+
+  public readonly role = signal<any>(null);
+
 
 
   changeStatus(){

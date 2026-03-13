@@ -1,9 +1,10 @@
-import {Component, inject, input, OnInit, output, TemplateRef} from '@angular/core';
+import {Component, inject, input, OnInit, output, signal, TemplateRef} from '@angular/core';
 import {TaskForm} from '../task-form/task-form';
 import {TaskItem} from '../task-item/task-item';
 import {TuiTableDirective, TuiTableTbody, TuiTableTh, TuiTableThGroup} from '@taiga-ui/addon-table';
 import {TuiButton, TuiDialogService} from '@taiga-ui/core';
 import {Task} from '../../../models/task.model';
+import {ProjectStateService} from '../../../services/project/project-state-service';
 
 @Component({
   selector: 'app-tasks-list',
@@ -22,6 +23,7 @@ import {Task} from '../../../models/task.model';
 export class TasksList implements OnInit {
 
   private readonly dialogs = inject(TuiDialogService);
+  private readonly projectStateService: ProjectStateService = inject(ProjectStateService);
 
 
   readonly projectId = input.required<number>();
@@ -30,7 +32,11 @@ export class TasksList implements OnInit {
   readonly taskCreated = output<Task>();
   readonly taskDeleted = output<number>();
   readonly taskUpdated = output<void>();
+
+  public readonly role = signal<any>(null);
   ngOnInit(): void {
+
+    this.role.set(this.projectStateService.role)
 
   }
 

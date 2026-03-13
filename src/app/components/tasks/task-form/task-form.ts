@@ -1,10 +1,13 @@
-import {Component, inject, input, output, signal} from '@angular/core';
+import {Component, inject, input, OnInit, output, signal} from '@angular/core';
 import {TaskService} from '../../../services/task/task-service';
 import {Task} from '../../../models/task.model';
 import {taskSuite} from './task.suite';
 import {FormsModule} from '@angular/forms';
 import { TuiButton, TuiTextfield} from '@taiga-ui/core';
 import {TuiChevron, TuiDataListWrapper, TuiSelect, TuiTextarea} from '@taiga-ui/kit';
+import {AuthService} from '../../../services/auth/auth';
+import {ProjectStateService} from '../../../services/project/project-state-service';
+import {NotificationsService} from '../../../services/notifications/notifications';
 
 @Component({
   selector: 'app-task-form',
@@ -20,11 +23,21 @@ import {TuiChevron, TuiDataListWrapper, TuiSelect, TuiTextarea} from '@taiga-ui/
   templateUrl: './task-form.html',
   styleUrl: './task-form.css',
 })
-export class TaskForm {
+export class TaskForm implements OnInit {
+  ngOnInit(): void {
+    this.currentMemberId.set(this.authService.getCurrentMemberId())
+
+  }
 
   private taskService = inject(TaskService);
+  private readonly authService = inject(AuthService);
+  private projectStateService = inject(ProjectStateService);
+  private notifService = inject(NotificationsService);
+
   public projectId = input.required<number>()
   public taskCreated = output<Task>();
+  public currentMemberId = signal<number | null>(null);
+
   public touched = {
     nom: false,
   };
@@ -77,16 +90,26 @@ export class TaskForm {
     this.result.set(taskSuite.run(this.newTask));
 
     if(this.result().isValid()){
-      const taskToSave = {...this.newTask, project: {id: this.projectId()}} as Task;
-      this.taskService.createTask(taskToSave).subscribe({
-        next: (savedTask) => {
-          this.resetForm(savedTask
-          );
-        },
-        error: (err) => {
-          console.log('Erreur lors de la création : ',err);
-        }
-      })
+      console.log("--- DEBUG SUBMIT ---");
+      console.log("State - Project:", this.projectStateService['_project']()); // On accède au privé pour le debug
+      console.log("State - UserId:", this.projectStateService['_userId']());
+      console.log("Calculated Member:", this.projectStateService.currentMember());
+      const mid = this.projectStateService.memberId();
+      if(mid){
+        const taskToSave = {...this.newTask, project: {id: this.projectId()}} as Task;
+
+        this.taskService.createTask(taskToSave, mid).subscribe({
+          next: (savedTask) => {
+            this.notifService.show("Tâche'"+ savedTask.nom + "'créée avec succès !");
+            this.resetForm(savedTask);
+          },
+          error: (err) => {
+            this.notifService.show("Impossible de créer la tâche. Vérifiez vos droits.", "error");
+          }
+        });
+      }else {
+        this.notifService.show("Aucun ID de membre trouvé pour ce projet");
+      }
     }
   }
 

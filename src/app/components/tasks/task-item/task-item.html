@@ -42,7 +42,7 @@
   <td tuiTd>{{task().dateEcheance | date:'dd/MM/yyyy'}}</td>
   <td tuiTd> {{task().assignee ? task().assignee?.username : 'aucun'}} </td>
   <td tuiTd>
-    @if(isadmin()){
+    @if(this.role() === "ADMIN"){
       <button
         tuiIconButton
         appearance="flat"
