@@ -16,7 +16,6 @@ export class AuthService {
   currentUser = signal<any>(null);
 
   constructor() {
-    // 1. Récupération au rafraîchissement de la page (F5)
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
       const user = JSON.parse(savedUser);
@@ -30,7 +29,6 @@ export class AuthService {
   }
 
   login(credentials: any): Observable<any> {
-    // On définit explicitement que l'on envoie du JSON
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -42,12 +40,10 @@ export class AuthService {
         localStorage.setItem('currentUser', JSON.stringify(response));
         this.currentUser.set(response);
 
-        // On synchronise l'ID pour ton ProjectStateService
         if (response && response.id) {
           this.projectStateService.setUserId(response.id);
         }
 
-        console.log('Login réussi :', response);
       })
     );
   }
@@ -58,7 +54,7 @@ export class AuthService {
 
 
   logout() {
-    localStorage.removeItem('user');
+    localStorage.removeItem('currentUser');
     this.currentUser.set(null);
   }
 

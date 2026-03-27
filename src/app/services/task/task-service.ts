@@ -22,7 +22,6 @@ export class TaskService {
   }
 
   updateTask(id: number, task: Partial<Task>,memberId: number): Observable<Task>{
-    console.log(memberId)
     const headers = new HttpHeaders().set('X-Member-ID', memberId.toString());
     return this.http.put<Task>(`${this.apiUrl}/${id}`, task, { headers: headers });
   }

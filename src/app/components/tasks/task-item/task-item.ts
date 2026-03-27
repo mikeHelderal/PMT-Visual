@@ -101,7 +101,6 @@ export class TaskItem implements OnInit {
   }
 
   saveName(newName: string) {
-    console.log('change nom ')
     const memberId = Number(this.member.id);
 
     if (!memberId) {
@@ -111,7 +110,7 @@ export class TaskItem implements OnInit {
     if (newName !== this.task().nom) {
       this.taskService.updateTask(this.task().id!, { nom: newName },Number(this.member.id!)).subscribe({
         next: () => {
-          this.task().nom = newName; // Mise à jour locale
+          this.task().nom = newName;
           this.isEditing.set(false);
         }
       });

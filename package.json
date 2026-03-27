@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "prettier": {
     "printWidth": 100,
@@ -39,14 +41,21 @@
     "@taiga-ui/layout": "^4.74.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "vest": "^6.1.0"
+    "vest": "^6.1.0",
+    "zone.js": "^0.16.1"
   },
   "devDependencies": {
     "@angular/build": "^21.0.1",
     "@angular/cli": "^21.0.1",
     "@angular/compiler-cli": "^21.0.0",
-    "jsdom": "^27.1.0",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "jest-preset-angular": "^16.1.1",
+    "jsdom": "^27.4.0",
     "less": "^4.5.1",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }

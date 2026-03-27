@@ -90,11 +90,7 @@ export class TaskForm implements OnInit {
     this.result.set(taskSuite.run(this.newTask));
 
     if(this.result().isValid()){
-      console.log("--- DEBUG SUBMIT ---");
-      console.log("State - Project:", this.projectStateService['_project']()); // On accède au privé pour le debug
-      console.log("State - UserId:", this.projectStateService['_userId']());
-      console.log("Calculated Member:", this.projectStateService.currentMember());
-      const mid = this.projectStateService.memberId();
+    const mid = this.projectStateService.memberId();
       if(mid){
         const taskToSave = {...this.newTask, project: {id: this.projectId()}} as Task;
 

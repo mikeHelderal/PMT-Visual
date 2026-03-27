@@ -47,10 +47,10 @@
       </tui-textfield>
     </div>
 
-    @if (result.hasErrors()) {
+    @if (result().hasErrors()) {
 
       <tui-error
-        [error]="result.getErrors()[0]">
+        [error]="result().getErrors('username')[0]">
       </tui-error>
     }
 
@@ -58,7 +58,7 @@
       <button
         tuiButton
         type="submit"
-        [disabled]="result.hasErrors() ||  result.hasErrors() ||
+        [disabled]="result().hasErrors() ||  result().hasErrors() ||
     !user.username ||
     !user.email ||
     !user.password"

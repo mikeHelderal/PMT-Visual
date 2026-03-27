@@ -48,7 +48,7 @@
 <ng-template #createTask let-observer>
   <app-task-form
     [projectId]="projectId()"
-    (taskCreated)="onTaskCreated($event, observer)"
+    (taskCreated)="onTaskCreated($event);observer.complete()"
     class="task-modal-form"
   />
 </ng-template>
