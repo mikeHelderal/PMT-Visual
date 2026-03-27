@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth';
 import {registerSuite} from './register.validation';
@@ -21,18 +21,18 @@ export class Register {
   private router = inject(Router);
 
   user = {username: '',email: '', password: ''};
-  result: any = registerSuite.get();
+  result = signal(registerSuite.get());
   constructor(private authService: AuthService,) {}
 
   validate(field: string){
     registerSuite.run(this.user, field);
-    this.result = registerSuite.get();
+    this.result.set(registerSuite.get());
   }
 
   onSubmit(){
-    this.result = registerSuite.run(this.user);
+    this.result.set(registerSuite.run(this.user));
 
-    if(this.result.isValid()){
+    if(this.result().isValid()){
       this.authService.register(this.user).subscribe({
         next: () =>{
           alert('Inscription réussie !');

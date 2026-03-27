@@ -38,9 +38,7 @@ export class ProjectList implements OnInit {
   }
 
   showDialog(content: TemplateRef<any>){
-    console.log('ici');
     this.dialogs.open(content,{label: 'Nouveau projet', size: 'm'}).subscribe(() => {
-      console.log("testo");
     });
   }
 

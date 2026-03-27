@@ -33,9 +33,7 @@ export class ProjectService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`,{headers});
   }
 
-  // Dans ProjectService par exemple
   getUserRoleInProject(project: any, userId: number): string {
-    // On cherche le membre dans le projet qui correspond à notre ID utilisateur
     const membership = project.membres?.find((m: any) => m.user.id === userId);
     return membership ? membership.role.libelle : 'GUEST';
   }

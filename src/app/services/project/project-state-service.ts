@@ -5,12 +5,11 @@ import {computed, Injectable, signal} from '@angular/core';
 })
 export class ProjectStateService {
 
-  private _project = signal<any>(null);
+  protected _project = signal<any>(null);
 
-  private _userId = signal<number | null>(null);
+  protected _userId = signal<number | null>(null);
 
   setProject(project: any) {
-    console.log('setProject', project);
     this._project.set(project);}
   setUserId(id: number) { this._userId.set(id)}
 
@@ -18,7 +17,6 @@ export class ProjectStateService {
     const p = this._project();
     const uid = this._userId();
     if (!p || !uid) return null;
-    console.log("p => ", p)
     return p.membres?.find((m: any) => m.user.id === uid) || null;
   });
 

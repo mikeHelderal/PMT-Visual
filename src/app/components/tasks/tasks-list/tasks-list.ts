@@ -46,12 +46,11 @@ export class TasksList implements OnInit {
       label: 'Nouvelle tâche',
       size: 'm',
     }).subscribe({
-      complete: () => console.log('Dialog fermée'),
+
     });
   }
-  onTaskCreated(newTask: Task, observer: { complete: () => void }): void {
+  onTaskCreated(newTask: Task): void {
     this.taskCreated.emit(newTask);
-    observer.complete();
   }
 
   onTaskUpdated(){

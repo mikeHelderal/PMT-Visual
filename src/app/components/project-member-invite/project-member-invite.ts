@@ -50,7 +50,6 @@ export class ProjectMemberInvite {
       label: 'Nouveau membre',
       size: 'm',
     }).subscribe({
-      complete: () => console.log('Dialog fermée'),
     });
   }
 
@@ -71,7 +70,7 @@ export class ProjectMemberInvite {
       next: () => {
         this.isLoading.set(false);
         this.form = { email: '', roleName: 'MEMBER' };
-        this.result.set(INVITE_SUITE.get()); // Reset validation
+        this.result.set(INVITE_SUITE.get());
         this.memberAdded.emit();
       },
       error: (err) => {

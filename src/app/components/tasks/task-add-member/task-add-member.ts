@@ -40,7 +40,6 @@ export class TaskAddMember implements OnInit {
     this.projectMemberService.getMembers(this.projectId()).subscribe({
       next: (result: ProjectMember[]) => {
         this.listMember.set(result);
-        console.log(result)
       }
     })
 
@@ -56,20 +55,22 @@ openAssignDialog(content : TemplateRef<any>){
     label: "Assigner un membre",
     size: "s",
   }).subscribe(result => {
-    console.log("result => ", result)
   });
 }
 
-  assign(observer: any){
-    console.log(this.newMember());
-    if(this.newMember().id){
-      this.taskService.assignTask(this.task().id!,this.projectId(),this.newMember().id).subscribe({
-       next: () => {
-         observer.complete();
-         this.memberAdded.emit()
-       }
-      })
+  assign(observer: any) {
+    const member = this.newMember();
+
+    if (!member || member.id === 0) {
+      return;
     }
+
+    this.taskService.assignTask(this.projectId(), this.task().id!, member.id).subscribe({
+      next: () => {
+        this.memberAdded.emit();
+        observer.complete();
+      }
+    });
   }
 
 

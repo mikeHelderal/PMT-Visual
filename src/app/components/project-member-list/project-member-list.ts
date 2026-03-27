@@ -49,7 +49,6 @@ export class ProjectMemberList {
     this.isLoading.set(true);
     this.memberService.getMembers(this.projectId()).subscribe({
       next: data => {
-        console.log("data => ", data);
         this.members.set(data);
         this.isLoading.set(false);
 

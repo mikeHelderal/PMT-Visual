@@ -34,11 +34,12 @@ export class TaskHistory {
       }
     });
   }
-
   private loadHistory(id: number): void {
     this.taskService.getTaskHistory(id).subscribe({
       next: (data: TaskHistoryModel[]) => this.historyItems.set(data),
-      error: () => console.error("Erreur de synchronisation; err")
+      error: (err) => {
+        console.error("Erreur lors du chargement de l'historique", err);
+      }
     });
   }
 
