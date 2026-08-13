@@ -92,6 +92,17 @@ describe('TaskForm', () => {
         "error"
       );
     });
+
+    it('ne devrait rien envoyer si le formulaire est invalide (nom vide)', () => {
+      mockProjectStateService.memberId.mockReturnValue(456);
+
+      component.newTask.nom = '';
+      component.submitTask();
+
+      expect(mockTaskService.createTask).not.toHaveBeenCalled();
+      expect(component.touched.nom).toBe(true);
+      expect(component.result().hasErrors('nom')).toBe(true);
+    });
   });
 
   describe('Validation', () => {
@@ -99,6 +110,24 @@ describe('TaskForm', () => {
       component.onInput('nom');
       expect(component.touched.nom).toBe(true);
       expect(component.result().hasErrors('nom')).toBe(true);
+    });
+  });
+
+  describe('Libellés affichés dans les listes déroulantes', () => {
+    it('devrait traduire chaque priorité', () => {
+      expect(component.stringifyPriorite('BASSE')).toBe('Basse');
+      expect(component.stringifyPriorite('MOYENNE')).toBe('Moyenne');
+      expect(component.stringifyPriorite('HAUTE')).toBe('Haute');
+      // Valeur inconnue : affichée telle quelle
+      expect(component.stringifyPriorite('URGENTE')).toBe('URGENTE');
+    });
+
+    it('devrait traduire chaque statut', () => {
+      expect(component.stringifyStatut('A_FAIRE')).toBe('a faire');
+      expect(component.stringifyStatut('EN_COURS')).toBe('en cours');
+      expect(component.stringifyStatut('TERMINER')).toBe('terminé');
+      // Valeur inconnue : affichée telle quelle
+      expect(component.stringifyStatut('ARCHIVE')).toBe('ARCHIVE');
     });
   });
 });

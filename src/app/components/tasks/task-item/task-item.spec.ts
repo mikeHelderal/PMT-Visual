@@ -22,7 +22,8 @@ describe('TaskItem', () => {
 
   const mockTaskService = {
     updateTask: jest.fn().mockReturnValue(of({})),
-    updateTaskStatus: jest.fn().mockReturnValue(of({}))
+    updateTaskStatus: jest.fn().mockReturnValue(of({})),
+    deleteTask: jest.fn().mockReturnValue(of(undefined))
   };
 
   const mockProjectStateService = {
@@ -95,6 +96,103 @@ describe('TaskItem', () => {
 
   it('devrait retourner la bonne apparence selon la priorité', () => {
     expect(component.getPriorityAppearance('HAUTE')).toBe('danger');
+    expect(component.getPriorityAppearance('MOYENNE')).toBe('warning');
     expect(component.getPriorityAppearance('BASSE')).toBe('success');
+    // Priorité inconnue : on retombe sur l'apparence neutre
+    expect(component.getPriorityAppearance('INCONNUE' as any)).toBe('neutral');
+  });
+
+  describe('Changement de priorité', () => {
+    it('devrait passer à la priorité suivante du cycle', () => {
+      mockTaskService.updateTask.mockClear();
+
+      component.changePriority();
+
+      expect(mockTaskService.updateTask).toHaveBeenCalledWith(1, { priorite: 'HAUTE' }, 55);
+      expect(component.task().priorite).toBe('HAUTE');
+    });
+
+    it('devrait revenir à BASSE après HAUTE (cycle complet)', () => {
+      component.task().priorite = 'HAUTE';
+
+      component.changePriority();
+
+      expect(component.task().priorite).toBe('BASSE');
+    });
+  });
+
+  describe('Garde-fou : membre du projet inconnu', () => {
+    beforeEach(() => {
+      // Simule un localStorage sans utilisateur courant
+      (component as any).member = {};
+      mockTaskService.updateTask.mockClear();
+      mockTaskService.updateTaskStatus.mockClear();
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => jest.restoreAllMocks());
+
+    it('changeStatus() ne doit rien envoyer sans identifiant de membre', () => {
+      component.changeStatus();
+      expect(mockTaskService.updateTaskStatus).not.toHaveBeenCalled();
+    });
+
+    it('changePriority() ne doit rien envoyer sans identifiant de membre', () => {
+      component.changePriority();
+      expect(mockTaskService.updateTask).not.toHaveBeenCalled();
+    });
+
+    it('saveName() ne doit rien envoyer sans identifiant de membre', () => {
+      component.saveName('Autre nom');
+      expect(mockTaskService.updateTask).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Suppression', () => {
+    afterEach(() => jest.restoreAllMocks());
+
+    it('devrait supprimer la tâche après confirmation', () => {
+      jest.spyOn(window, 'confirm').mockReturnValue(true);
+      const emitSpy = jest.spyOn(component.taskDeleted, 'emit');
+
+      component.onDelete();
+
+      expect(mockTaskService.deleteTask).toHaveBeenCalledWith(1, 55);
+      expect(emitSpy).toHaveBeenCalledWith(1);
+    });
+
+    it('ne devrait rien supprimer si l’utilisateur annule', () => {
+      jest.spyOn(window, 'confirm').mockReturnValue(false);
+      mockTaskService.deleteTask.mockClear();
+
+      component.onDelete();
+
+      expect(mockTaskService.deleteTask).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Mode édition', () => {
+    it('toggleEdit() devrait inverser l’état d’édition', () => {
+      expect(component.isEditing()).toBe(false);
+
+      component.toggleEdit();
+      expect(component.isEditing()).toBe(true);
+
+      component.toggleEdit();
+      expect(component.isEditing()).toBe(false);
+    });
+
+    it('updateTask() devrait notifier le parent', () => {
+      const emitSpy = jest.spyOn(component.taskUpdated, 'emit');
+
+      component.updateTask();
+
+      expect(emitSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('ngOnInit() devrait récupérer le rôle depuis le service d’état du projet', () => {
+    component.ngOnInit();
+    expect(component.role()).toBe(mockProjectStateService.role);
   });
 });
