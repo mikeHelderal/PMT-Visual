@@ -2,7 +2,7 @@ name: Frontend CI-CD
 
 on:
   push:
-    branches: [  "develop" ]
+    branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
 
@@ -19,25 +19,43 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      # `ci` plutôt que `install` : installation reproductible à partir du lock-file
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run Tests
-        run: npm test -- --watch=false --browsers=ChromeHeadless
+      # Jest applique le seuil de couverture de 60 % défini dans jest.config.js :
+      # l'étape échoue si la couverture repasse en dessous.
+      - name: Run tests with coverage
+        run: npm run test:coverage -- --ci
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage-report
+          path: coverage/pmt-frontend/
+          retention-days: 30
 
       - name: Build project
         run: npm run build -- --configuration production
 
+      # Déploiement : uniquement sur push de branche. Une pull request
+      # exécute les tests sans publier d'image.
       - name: Login to Docker Hub
+        if: github.event_name == 'push'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
+        if: github.event_name == 'push'
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pmt-frontend:latest
+          # `latest` pour le déploiement courant, le SHA pour pouvoir revenir en arrière
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/pmt-frontend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/pmt-frontend:${{ github.sha }}
